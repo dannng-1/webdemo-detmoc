@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dệt Mộc - Nền Tảng Sống Xanh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #c3ffba; }
+        .font-serif { font-family: 'Merriweather', serif; }
+        .hidden { display: none; }
+        .btn-press:active { transform: scale(0.95); }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-backdrop { background-color: rgba(0, 0, 0, 0.5); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .filter-btn.active { background-color: #33ad60; color: white; border-color: #1fc35b; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="w-full mx-auto bg-white min-h-screen shadow-2xl flex flex-col border-x border-gray-200 relative">
+        
+        <header class="sticky top-0 bg-white/95 backdrop-blur z-40 border-b border-gray-100 px-6 py-4 flex justify-between items-center">
+            <div onclick="switchView('home')" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
+                <span class="text-2xl">🌿</span>
+                <span class="font-serif text-2xl font-bold text-green-800">Dệt Mộc</span>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <nav class="hidden md:flex gap-8 text-sm font-medium text-gray-500 h-full">
+                    <span onclick="switchView('home')" id="nav-home" class="cursor-pointer hover:text-green-700 transition font-bold text-green-700">Trang chủ</span>
+                    <span onclick="switchView('community')" id="nav-community" class="cursor-pointer hover:text-green-700 transition">Cộng đồng</span>
+                    <span onclick="switchView('about')" id="nav-about" class="cursor-pointer hover:text-green-700 transition">Về chúng tôi</span>
+                </nav>
+
+                <div class="flex gap-4 items-center">
+                    <div onclick="switchView('cart')" class="relative cursor-pointer p-2 hover:bg-gray-100 rounded-full transition group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        <span id="cart-badge" class="hidden absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">0</span>
+                    </div>
+                    <div onclick="switchView('profile')" class="cursor-pointer w-9 h-9 rounded-full bg-gray-200 overflow-hidden border-2 border-transparent hover:border-green-500 transition">
+                        <img src="https://i.pinimg.com/736x/a5/77/68/a57768c4b52d25358b7e84b8c3db274b.jpg" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 p-6">
+            
+            <div id="view-home" class="fade-in">
+                <div class="relative h-[500px] rounded-2xl overflow-hidden mb-16 flex items-center justify-center text-center shadow-xl group">
+                    <img src="https://scontent.fhan14-1.fna.fbcdn.net/v/t39.30808-6/494762865_1278673490928755_126157721553160340_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeGZ7gSBTXKH9WDnQWTMH-dSrv4XBqt-ha2u_hcGq36FrWrexp6q1jQah4owugoPx0sW60CMM-Oyt8bMEYnprd46&_nc_ohc=qPpm_-fqYo4Q7kNvwEOJDUE&_nc_oc=Adk0NJCIwyNxZK1nN5vX7SqnkHJHcSOLu-bikjTgr6jGbAEXhh9Z8LYqMs7zrJ0P5dy_xf3dGpfr5x4hTdDKp4F7&_nc_zt=23&_nc_ht=scontent.fhan14-1.fna&_nc_gid=E9BvctRIe5HC_WtewWS05w&oh=00_Afn2OlxFXrEb_P2nlgaiabbevuYaT81jxeYI_Wb-BNqIGA&oe=693C4E49" 
+                         class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                    <div class="absolute inset-0 bg-black/40"></div>
+                    <div class="relative z-10 max-w-3xl px-6">
+                        <h1 class="font-['Merriweather'] text-5xl md:text-5xl font-bold text-white mb-6 leading-relaxed drop-shadow-lg tracking-normal">
+                            Dệt từng mảnh xanh <br/>Gieo từng nhịp sống
+                        </h1>
+                        <p class="text-white/30 text-lg md:text-xl mb-10 font-medium drop-shadow-md">
+                        Nền tảng thương mại điện tử kết hợp mạng xã hội xanh đầu tiên dành cho Gen Z.
+                        </p>
+                        <div class="flex flex-col md:flex-row gap-4 justify-center">
+                            <button onclick="document.getElementById('search-area').scrollIntoView({behavior: 'smooth'})" class="bg-[#658354] text-white px-8 py-3.5 rounded-full font-bold text-lg hover:bg-[#658354] transition shadow-lg btn-press flex items-center justify-center gap-2">Mua Sắm Xanh 🛍️</button>
+                            <button onclick="switchView('community')" class="bg-transparent border-2 border-white text-white px-8 py-3.5 rounded-full font-bold text-lg hover:bg-white/10 transition btn-press flex items-center justify-center gap-2 backdrop-blur-sm">Cộng Đồng 🌿</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-20 text-center max-w-6xl mx-auto">
+                    <div class="mb-12">
+                        <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#2d4a1c] mb-4">Tại sao lại là Dệt Mộc?</h2>
+                        <p class="text-gray-600 text-lg">Chúng tôi không chỉ bán quần áo, chúng tôi trao giải pháp cho lối sống bền vững.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                        <div class="bg-white p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:-translate-y-2 transition duration-300">
+                            <div class="w-14 h-14 bg-[#8B5E3C]/10 rounded-full flex items-center justify-center text-2xl mb-6 text-[#8B5E3C]">👕</div>
+                            <h4 class="font-bold text-xl text-gray-800 mb-3">Chống lãng phí</h4>
+                            <p class="text-gray-500 leading-relaxed">Giảm thiểu rác thải dệt may thông qua việc tái chế.</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:-translate-y-2 transition duration-300">
+                            <div class="w-14 h-14 bg-[#8B5E3C]/10 rounded-full flex items-center justify-center text-2xl mb-6 text-[#8B5E3C]">🤝</div>
+                            <h4 class="font-bold text-xl text-gray-800 mb-3">Kết nối cộng đồng</h4>
+                            <p class="text-gray-500 leading-relaxed">Nơi chia sẻ outfit bền vững và lan tỏa cảm hứng.</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:-translate-y-2 transition duration-300">
+                            <div class="w-14 h-14 bg-[#8B5E3C]/10 rounded-full flex items-center justify-center text-2xl mb-6 text-[#8B5E3C]">🌿</div>
+                            <h4 class="font-bold text-xl text-gray-800 mb-3">Minh bạch 100%</h4>
+                            <p class="text-gray-500 leading-relaxed">Mọi sản phẩm đều được gắn nhãn "Eco Verified".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-area" class="mb-8 pt-4 border-t border-gray-100">
+                    <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 font-serif border-l-4 border-green-600 pl-4">Sản phẩm nổi bật</h2>
+                        <div class="relative w-full md:w-96">
+                            <input type="text" id="search-input" placeholder="Tìm kiếm..." class="w-full border border-gray-200 rounded-full py-2.5 px-5 pl-12 outline-none focus:border-green-500 bg-gray-50" oninput="filterProducts()">
+                            <svg class="absolute left-4 top-3 text-gray-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 overflow-x-auto pb-2 scrollbar-hide mb-6">
+                        <button onclick="setCategory('all')" class="filter-btn active border border-gray-200 px-4 py-1.5 rounded-full text-sm font-bold text-gray-600 hover:bg-green-50 transition" id="btn-all">Tất cả</button>
+                        <button onclick="setCategory('best_seller')" class="filter-btn border border-gray-200 px-4 py-1.5 rounded-full text-sm font-bold text-gray-600 hover:bg-green-50 transition" id="btn-best_seller">🔥 Bán chạy</button>
+                        <button onclick="setCategory('decor')" class="filter-btn border border-gray-200 px-4 py-1.5 rounded-full text-sm font-bold text-gray-600 hover:bg-green-50 transition" id="btn-decor">🏠 Trang trí</button>
+                        <button onclick="setCategory('fashion')" class="filter-btn border border-gray-200 px-4 py-1.5 rounded-full text-sm font-bold text-gray-600 hover:bg-green-50 transition" id="btn-fashion">👜 Thời trang</button>
+                        <button onclick="setCategory('office')" class="filter-btn border border-gray-200 px-4 py-1.5 rounded-full text-sm font-bold text-gray-600 hover:bg-green-50 transition" id="btn-office">📘 Văn phòng</button>
+                    </div>
+                    <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+                    <div id="no-result" class="hidden text-center py-10">
+                        <div class="text-4xl mb-2">🤔</div>
+                        <p class="text-gray-500">Không tìm thấy sản phẩm nào.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-cart" class="hidden fade-in max-w-7xl mx-auto pb-20">
+                <div class="mb-8 mt-4">
+                    <h2 class="text-3xl font-serif font-bold text-green-800">Thanh Toán & Vận Chuyển</h2>
+                    <div class="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                        <span>Giỏ hàng</span> <span class="text-gray-300">/</span> <span class="font-bold text-gray-800">Thanh toán</span> <span class="text-gray-300">/</span> <span>Hoàn tất</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <h3 class="font-bold text-lg mb-4 flex items-center gap-2">📍 Địa chỉ nhận hàng</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="col-span-2"><input type="text" placeholder="Họ và tên người nhận" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-green-600"></div>
+                                <div><input type="text" placeholder="Số điện thoại" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-green-600"></div>
+                                <div><input type="email" placeholder="Email (để nhận hóa đơn)" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-green-600"></div>
+                                <div class="col-span-2"><input type="text" placeholder="Địa chỉ chi tiết" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-green-600"></div>
+                                <div class="col-span-2"><textarea placeholder="Ghi chú giao hàng" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-green-600 h-20"></textarea></div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <h3 class="font-bold text-lg mb-4">📦 Sản phẩm trong đơn</h3>
+                            <div id="checkout-items" class="space-y-4"></div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 sticky top-24">
+                            <h3 class="font-bold text-lg mb-6">Đơn hàng của bạn</h3>
+                            <div class="space-y-3 mb-6 border-b border-gray-100 pb-6 text-sm">
+                                <div class="flex justify-between text-gray-600"><span>Tạm tính:</span> <span id="checkout-subtotal" class="font-medium">0₫</span></div>
+                                <div class="flex justify-between text-gray-600"><span>Phí vận chuyển:</span> <span class="font-medium">15.000₫</span></div>
+                                <div class="flex justify-between text-green-600"><span>Giảm giá:</span> <span class="font-medium">-0₫</span></div>
+                            </div>
+                            <div class="flex justify-between items-end mb-6">
+                                <span class="font-bold text-gray-800">Tổng cộng:</span>
+                                <span id="checkout-total" class="text-3xl font-bold text-red-500 font-serif">0₫</span>
+                            </div>
+                            <button onclick="alert('Đặt hàng thành công! Cảm ơn bạn đã sống xanh 🌿')" class="w-full bg-[#4E7C32] text-white py-4 rounded-xl font-bold hover:bg-[#3d6326] transition shadow-lg btn-press mb-4">ĐẶT HÀNG NGAY</button>
+                            <p class="text-xs text-center text-gray-400">Cam kết bảo mật thông tin 100%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-community" class="hidden fade-in max-w-5xl mx-auto">
+        <div class="bg-gradient-to-r from-[#537942] to-[#8DAB6F] rounded-2xl p-6 text-white shadow-lg mb-8 relative overflow-hidden">        <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h2 class="text-2xl font-bold flex items-center gap-2">🌿 Tủ Đồ Xanh & Cộng Đồng</h2>
+                <p class="text-green-100 text-sm mt-1">Quản lý tủ đồ, nhận gợi ý AI & Trao đổi bền vững.</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur rounded-xl p-4 min-w-[200px] border border-white/20">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-sm font-medium">Điểm Xanh</span>
+                    <span class="text-3xl font-bold" id="user-green-points">550</span>
+                </div>
+                <div class="w-full bg-green-900/50 h-2 rounded-full overflow-hidden">
+                    <div class="bg-yellow-400 h-full rounded-full" style="width: 70%"></div>
+                </div>
+                <p class="text-[10px] mt-1 text-right text-green-100">Thiếu 50 điểm để đổi Túi Vải</p>
+            </div>
+        </div>
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
+        <div class="absolute bottom-0 left-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl"></div>
+    </div>
+
+    <div class="flex justify-center mb-8">
+        <div class="bg-white p-1 rounded-full shadow-sm border border-gray-200 inline-flex">
+            <button onclick="switchHubTab('wardrobe')" id="tab-wardrobe" class="px-6 py-2 rounded-full text-sm font-bold transition-all bg-[#658354] text-white shadow-md">👕 Tủ Đồ Của Tôi</button>
+            <button onclick="switchHubTab('market')" id="tab-market" class="px-6 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-green-600 transition-all">♻️ Chợ Trao Đổi</button>
+        </div>
+    </div>
+
+    <div id="hub-wardrobe" class="fade-in">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="md:col-span-1 space-y-6">
+                <div onclick="triggerAIScan()" class="border-2 border-dashed border-green-400 bg-green-50 rounded-2xl h-64 flex flex-col items-center justify-center cursor-pointer hover:bg-green-100 transition group relative overflow-hidden">
+                    <div id="scan-loading" class="hidden absolute inset-0 bg-white/90 z-20 flex flex-col items-center justify-center">
+                        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600 mb-3"></div>
+                        <p class="text-sm font-bold text-green-800 animate-pulse">AI đang phân tích...</p>
+                    </div>
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl shadow-sm mb-4 group-hover:scale-110 transition">📸</div>
+                    <h3 class="font-bold text-green-800">Đăng món đồ mới</h3>
+                    <p class="text-xs text-gray-500 text-center px-6 mt-2">AI sẽ tự động nhận diện chất liệu & dán nhãn Eco.</p>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 relative group">
+    <h4 class="font-bold text-blue-800 text-sm mb-2">💡 Gợi ý hôm nay</h4>
+    <p class="text-xs text-blue-600 leading-relaxed mb-2">Thời tiết Hà Nội đang 20°C. Hãy thử mix <strong>Áo Len Oversize</strong> với <strong>Chân Váy Jeans</strong> nhé!</p>
+    <button onclick="saveContent('outfit-today', null)" class="w-full bg-white text-blue-600 border border-blue-200 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition shadow-sm flex items-center justify-center gap-2">
+        <span>⭐</span> Lưu Outfit này
+    </button>
+</div>
+                    <p class="text-xs text-blue-600 leading-relaxed">Thời tiết Hà Nội đang 20°C. Hãy thử mix <strong>Áo Len Oversize</strong> với <strong>Chân Váy Jeans</strong> nhé!</p>
+                </div>
+            </div>
+
+            <div class="md:col-span-2">
+                <h3 class="font-bold text-xl text-gray-800 mb-4 flex justify-between items-center">
+                    Đồ trong tủ của bạn 
+                    <span class="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full" id="wardrobe-count">0 món</span>
+                </h3>
+                <div id="my-wardrobe-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="hub-market" class="hidden fade-in">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-xl text-gray-800">Tin đăng mới nhất</h3>
+                    <button class="text-sm text-green-600 font-bold hover:underline">Xem tất cả</button>
+                </div>
+                <div id="swap-list-enhanced" class="space-y-4">
+                    </div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
+                <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">🏆 Top Đại Sứ Xanh</h3>
+                <div class="space-y-4">
+                     <div class="flex items-center gap-3"><span class="text-yellow-500 font-bold text-lg w-6">1</span><img src="https://i.pravatar.cc/150?img=11" class="w-10 h-10 rounded-full border border-gray-200"><div class="flex-1"><p class="text-sm font-bold">Hoàng Vinh</p><p class="text-xs text-gray-500">1,250 GP</p></div></div>
+                     <div class="flex items-center gap-3"><span class="text-gray-400 font-bold text-lg w-6">2</span><img src="https://i.pravatar.cc/150?img=5" class="w-10 h-10 rounded-full border border-gray-200"><div class="flex-1"><p class="text-sm font-bold">Thảo My</p><p class="text-xs text-gray-500">980 GP</p></div></div>
+                     <div class="flex items-center gap-3"><span class="text-orange-400 font-bold text-lg w-6">3</span><img src="https://i.pravatar.cc/150?img=3" class="w-10 h-10 rounded-full border border-gray-200"><div class="flex-1"><p class="text-sm font-bold">Minh Anh</p><p class="text-xs text-gray-500">850 GP</p></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <div id="view-about" class="hidden fade-in">
+                <div class="max-w-3xl mx-auto text-center mb-10">
+                    <h2 class="text-4xl font-bold text-gray-900 mt-2 mb-6">Hồi Sinh Những Điều Bỏ Quên</h2>
+                    <p class="text-gray-600 leading-relaxed text-lg">"Dệt Mộc tin rằng mỗi mảnh vải vụn, mỗi bã cà phê đều có một cuộc đời thứ hai rực rỡ hơn."</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="text-center p-6 border rounded-xl"><div class="text-4xl mb-4">♻️</div><h3 class="font-bold">Tái Chế</h3></div>
+                    <div class="text-center p-6 border rounded-xl"><div class="text-4xl mb-4">🤝</div><h3 class="font-bold">Cộng Đồng</h3></div>
+                    <div class="text-center p-6 border rounded-xl"><div class="text-4xl mb-4">🇻🇳</div><h3 class="font-bold">Văn Hóa</h3></div>
+                </div>
+            </div>
+
+            <div id="view-profile" class="hidden fade-in max-w-5xl mx-auto pb-20">
+    
+    <div class="bg-white rounded-2xl shadow-sm border border-white/40 p-8 mb-6 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full mix-blend-multiply filter blur-3xl opacity-70 -translate-y-1/2 translate-x-1/2"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
+            <div class="relative">
+                <img id="profile-avatar" src="" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                <div class="absolute bottom-1 right-1 bg-green-600 text-white p-1.5 rounded-full border-2 border-white shadow-sm" title="Đã xác thực danh tính">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
+                </div>
+            </div>
+            
+            <div class="text-center md:text-left flex-1">
+                <h2 id="profile-name" class="text-3xl font-serif font-bold text-gray-800">Tên User</h2>
+                <p id="profile-title" class="text-green-600 font-bold mb-1">Danh hiệu</p>
+                <p id="profile-date" class="text-xs text-gray-400">Tham gia...</p>
+                
+                <div class="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
+                    <button class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-bold text-gray-600 transition">⚙️ Cài đặt</button>
+                    <button class="px-4 py-2 border border-green-600 text-green-700 hover:bg-green-50 rounded-lg text-sm font-bold transition">Chia sẻ Profile</button>
+                </div>
+            </div>
+
+            <div class="bg-[#77906c] text-white p-6 rounded-2xl shadow-xl min-w-[240px] text-center transform transition hover:scale-105 duration-300">
+                <p class="text-xs font-medium text-green-100 uppercase tracking-wider mb-1">GreenPoints Hiện Có</p>
+                <div class="text-5xl font-bold font-serif mb-2" id="profile-points-display">0</div>
+                <div class="text-[10px] bg-white/20 inline-block px-3 py-1 rounded-full backdrop-blur-sm">
+                    Đẳng cấp: Sống Xanh 🌿
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-5 rounded-xl border border-green-100 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-2xl">♻️</div>
+            <div>
+                <p class="text-2xl font-bold text-gray-800" id="profile-trash-saved">0</p>
+                <p class="text-xs text-gray-500">Món đồ được hồi sinh</p>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-green-100 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl">☁️</div>
+            <div>
+                <p class="text-2xl font-bold text-gray-800"><span id="profile-co2">0</span> kg</p>
+                <p class="text-xs text-gray-500">Giảm thải CO2</p>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-green-100 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center text-2xl">⭐</div>
+            <div>
+                <p class="text-2xl font-bold text-gray-800">4.9/5</p>
+                <p class="text-xs text-gray-500">Đánh giá uy tín</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[500px]">
+    <div class="flex border-b border-gray-100">
+        <button id="tab-btn-posts" onclick="switchProfileTab('posts')" class="flex-1 py-4 font-bold text-green-700 border-b-2 border-green-600 bg-green-50/50 transition-all">Bài Đăng Của Tôi</button>
+        <button id="tab-btn-saved" onclick="switchProfileTab('saved')" class="flex-1 py-4 font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all">Đã Lưu </button>
+        <button id="tab-btn-orders" onclick="switchProfileTab('orders')" class="flex-1 py-4 font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all">Lịch sử giao hàng </button>
+    </div>
+    
+    <div class="p-6">
+        <div id="profile-content-area" class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in zoom-in duration-300">
+            </div>
+    </div>
+</div>
+        
+        <div class="p-6">
+            <div id="profile-posts-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                </div>
+        </div>
+    </div>
+</div>
+        </main>
+        
+        <footer class="bg-white border-t py-8 text-center text-sm text-gray-400 mt-auto"><p class="font-bold text-gray-600 mb-1">Dự án Khởi nghiệp Dệt Mộc</p><p>© By NEU-ECOWEAVERS</p></footer>
+    </div>
+
+    <div id="product-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 modal-backdrop transition-opacity" onclick="closeModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white w-full max-w-4xl h-[90vh] md:h-auto md:max-h-[90vh] rounded-lg shadow-2xl overflow-hidden flex flex-col">
+            <div class="absolute top-4 right-4 z-10"><button onclick="closeModal()" class="bg-gray-200 hover:bg-gray-300 rounded-full p-2">✕</button></div>
+            <div class="overflow-y-auto flex-1 p-6 scrollbar-hide" id="modal-content"></div>
+            <div class="bg-white border-t p-4 flex gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                <button onclick="openChatWithProduct()" class="flex-1 border border-teal-600 text-teal-600 py-3 rounded-lg font-bold hover:bg-teal-50 flex justify-center items-center gap-2">💬 Chat Ngay</button>
+                <button onclick="addToCartFromModal()" class="flex-1 bg-teal-100 text-teal-700 py-3 rounded-lg font-bold hover:bg-teal-200">🛒 Thêm vào giỏ</button>
+                <button class="flex-1 bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 shadow-lg">Mua Ngay</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-4 right-4 z-[100] flex flex-col items-end">
+        <div id="chat-window" class="hidden bg-white w-80 h-96 rounded-t-xl rounded-bl-xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden mb-4 transition-all duration-300 transform origin-bottom-right">
+            <div class="bg-green-700 text-white p-3 flex justify-between items-center cursor-pointer" onclick="toggleChat()"><div class="flex items-center gap-2"><div><h4 class="font-bold text-sm">CSKH Dệt Mộc 🤖</h4></div></div><button class="hover:bg-[#658354] rounded p-1">✕</button></div>
+            <div id="chat-messages" class="flex-1 bg-gray-50 p-3 overflow-y-auto space-y-3 text-sm"><div class="flex gap-2 items-start"><div class="bg-white p-2 rounded-r-lg rounded-bl-lg shadow-sm border border-gray-100 max-w-[80%]"><p class="text-gray-800">Chào bạn! Dệt Mộc có thể giúp gì cho bạn hôm nay? 🌱</p></div></div></div>
+            <div class="p-3 bg-white border-t border-gray-100"><div class="flex items-center bg-gray-100 rounded-full px-3 py-1"><input type="text" id="chat-input" placeholder="Nhập tin nhắn..." class="flex-1 bg-transparent border-none outline-none text-sm py-2" onkeypress="handleEnter(event)"><button onclick="sendMessage()" class="text-green-600 hover:text-green-800 p-1">➤</button></div></div>
+        </div>
+        <button onclick="toggleChat()" class="bg-green-700 hover:bg-green-800 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110 btn-press relative">💬 <span class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-white">1</span></button>
+    </div>
+    <div id="pass-modal" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closePassModal()"></div>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div class="bg-green-700 p-4 text-white flex justify-between items-center">
+            <h3 class="font-bold text-lg">♻️ Đăng Pass Món Này</h3>
+            <button onclick="closePassModal()" class="hover:bg-green-600 rounded-full p-1">✕</button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="flex items-center gap-4 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                <div id="pass-preview-img" class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-2xl shadow-sm border"></div>
+                <div>
+                    <h4 id="pass-preview-name" class="font-bold text-gray-800 text-sm">Tên món đồ</h4>
+                    <span id="pass-preview-material" class="text-xs text-gray-500">Chất liệu</span>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả tình trạng & Câu chuyện</label>
+                <textarea id="pass-desc-input" rows="3" class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:outline-none focus:border-green-500" placeholder="VD: Mới mặc 1 lần, pass vì không vừa size..."></textarea>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Độ mới (%)</label>
+                    <select id="pass-condition-input" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-green-500">
+                        <option value="New">Mới tinh (New)</option>
+                        <option value="99%">Like New (99%)</option>
+                        <option value="90%">Độ mới 90%</option>
+                        <option value="80%">Độ mới 80%</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Muốn đổi lấy</label>
+                    <select id="pass-type-input" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-green-500">
+                        <option value="GreenPoints">💰 Điểm GP</option>
+                        <option value="Swap">🔄 Đổi đồ khác</option>
+                        <option value="Free">🎁 Tặng miễn phí</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="submitPassForm()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-lg hover:bg-green-700 transition transform active:scale-95">
+                Đăng Lên Cộng Đồng Ngay
+            </button>
+        </div>
+    </div>
+</div>
+    <script>
+        // --- 0. DỮ LIỆU NGƯỜI DÙNG (SOURCE OF TRUTH) ---
+    const currentUser = {
+    name: "Chu Đức Minh",
+    title: "Đại Sứ Sống Xanh 🌱",
+    points: 450,
+    avatar: "https://i.pinimg.com/736x/a5/77/68/a57768c4b52d25358b7e84b8c3db274b.jpg",
+    joinedDate: "Tham gia từ tháng 10/2024",
+    impact: {
+        trashSaved: 15, 
+        co2Reduced: 4.5
+    }
+};
+    // --- DỮ LIỆU ĐÃ LƯU ---
+const savedCommunityPosts = [
+    { id: 201, name: "Áo Len Họa Tiết", user: "Thảo My", type: "Tặng miễn phí", img: "🧶", status: "Còn hàng" },
+    { id: 202, name: "Chân Váy Dài", user: "Minh Tú", type: "Trao đổi", img: "👗", status: "Đã pass" }
+];
+// --- HÀM XỬ LÝ LƯU BÀI & OUTFIT ---
+function saveContent(type, id) {
+    if (type === 'post') {
+        // 1. Lưu bài đăng cộng đồng
+        const item = swapItems.find(i => i.id === id);
+        if(item) {
+            // Kiểm tra xem đã lưu chưa để tránh trùng
+            if(!savedCommunityPosts.find(p => p.id === item.id)) {
+                savedCommunityPosts.unshift({
+                    id: item.id,
+                    name: item.name,
+                    user: item.user,
+                    type: item.type,
+                    img: item.icon,
+                    status: "Đang hiển thị"
+                });
+                alert("✅ Đã lưu bài viết vào Profile!");
+            } else {
+                alert("⚠️ Bạn đã lưu bài này rồi!");
+            }
+        }
+    } 
+    else if (type === 'outfit-today') {
+        // 2. Lưu Outfit gợi ý hôm nay
+        const newOutfit = {
+            id: Date.now(),
+            name: "Outfit Gợi Ý Hôm Nay (20°C)",
+            style: "Casual / Đi học",
+            items: ["Áo Len Oversize", "Chân Váy Jeans", "Giày Sneaker"],
+            img: "💡",
+            date: new Date().toLocaleDateString('vi-VN')
+        };
+        savedAIOutfits.unshift(newOutfit);
+        alert("✅ Đã lưu Outfit vào bộ sưu tập!");
+    }
+}
+const savedAIOutfits = [
+    { id: 301, name: "Set Đi Làm Thanh Lịch", style: "Minimalist", items: ["Áo Sơ Mi Trắng", "Quần Âu Be", "Túi Tote"], img: "💼", date: "10/12/2024" },
+    { id: 302, name: "Dạo Phố Cuối Tuần", style: "Vintage", items: ["Váy Hoa Nhí", "Cardigan Mỏng", "Mũ Cói"], img: "🌻", date: "08/12/2024" }
+];
+
+const orderHistory = [
+    { id: "HD001", date: "08/12/2025", items: "Túi Tote Jeans, Sổ Tay", total: 245000, status: "Giao thành công", statusColor: "green" },
+    { id: "HD002", date: "05/12/2025", items: "Áo Len Secondhand", total: 80000, status: "Đang vận chuyển", statusColor: "orange" },
+    { id: "HD003", date: "01/12/2025", items: "Combo 3 Chai Thủy Tinh", total: 45000, status: "Đã hủy", statusColor: "red" }
+];
+
+// --- HÀM CHUYỂN TAB PROFILE ---
+function switchProfileTab(tabName) {
+    const container = document.getElementById('profile-content-area');
+    
+    // 1. Reset Style các nút bấm
+    ['posts', 'saved', 'orders'].forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if(btn) {
+            if(t === tabName) {
+                // Style Active (Đang chọn)
+                btn.className = "flex-1 py-4 font-bold text-green-700 border-b-2 border-green-600 bg-green-50/50 transition-all";
+            } else {
+                // Style Inactive (Không chọn)
+                btn.className = "flex-1 py-4 font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all";
+            }
+        }
+    });
+
+    // 2. Render nội dung tương ứng
+    if (tabName === 'posts') {
+        // --- TAB 1: BÀI ĐĂNG CỦA TÔI ---
+        const myPosts = swapItems.filter(item => item.user === "Bạn (Me)" || item.user === currentUser.name);
+        if(myPosts.length === 0) {
+            container.innerHTML = `<div class="col-span-2 text-center py-10 text-gray-400 italic">Bạn chưa đăng bài nào. Hãy dọn tủ đồ ngay!</div>`;
+        } else {
+            container.innerHTML = myPosts.map(p => `
+                <div class="flex gap-4 p-4 border border-gray-100 rounded-xl hover:shadow-md transition bg-white group">
+                    <div class="w-20 h-20 bg-gray-50 rounded-lg flex items-center justify-center text-3xl border border-gray-100 shrink-0">${p.icon}</div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-gray-800 line-clamp-1">${p.name}</h4>
+                            <span class="text-[10px] px-2 py-1 bg-green-100 text-green-800 rounded-full font-bold">${p.type}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 line-clamp-2">${p.desc || 'Mô tả ngắn...'}</p>
+                        <div class="mt-3 flex gap-2 opacity-80 group-hover:opacity-100 transition">
+                            <button onclick="switchHubTab('market'); switchView('community')" class="text-xs font-bold text-blue-600 hover:underline">Xem bài</button>
+                            <button onclick="deletePost(${p.id})" class="text-xs font-bold text-red-500 hover:underline">Xóa</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } 
+     else if (tabName === 'saved') {
+        // 1. Tạo thanh menu con (Sub-nav) để chọn loại lưu trữ
+        container.innerHTML = `
+            <div class="flex gap-3 mb-6">
+                <button onclick="filterSavedItems('posts')" id="btn-sub-posts" class="px-4 py-2 rounded-full text-sm font-bold bg-green-600 text-white shadow-md transition">📌 Bài Đăng Cộng Đồng</button>
+                <button onclick="filterSavedItems('outfits')" id="btn-sub-outfits" class="px-4 py-2 rounded-full text-sm font-bold bg-gray-100 text-gray-500 hover:bg-gray-200 transition">✨ Outfit AI Gợi Ý</button>
+            </div>
+            <div id="saved-sub-content" class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-2">
+                </div>
+        `;
+        // Mặc định hiển thị tab "Bài đăng" trước
+        filterSavedItems('posts');
+    }
+    else if (tabName === 'orders') {
+        // --- TAB 3: LỊCH SỬ GIAO DỊCH ---
+        // Tab này dùng layout 1 cột (col-span-2)
+        container.innerHTML = `
+            <div class="col-span-2 space-y-3">
+                ${orderHistory.map(order => `
+                    <div class="flex flex-col md:flex-row md:items-center justify-between p-4 border border-gray-100 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-sm transition">
+                        <div class="flex items-center gap-4 mb-2 md:mb-0">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-lg shadow-sm">📦</div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm">Đơn hàng #${order.id}</p>
+                                <p class="text-xs text-gray-500">${order.date} • ${order.items}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-6 w-full md:w-auto">
+                            <span class="text-xs font-bold px-3 py-1 rounded-full border bg-white 
+                                ${order.statusColor === 'green' ? 'text-green-600 border-green-200' : 
+                                  (order.statusColor === 'orange' ? 'text-orange-600 border-orange-200' : 'text-red-500 border-red-200')}">
+                                ${order.status}
+                            </span>
+                            <span class="font-bold text-gray-800">${order.total.toLocaleString()}₫</span>
+                        </div>
+                    </div>
+                `).join('')}
+                <div class="text-center mt-4">
+                    <button class="text-xs text-gray-500 hover:text-green-600 underline">Xem tất cả đơn hàng cũ</button>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Hàm này sẽ cập nhật điểm số hiển thị ở MỌI NƠI trên web
+function updateAllPointDisplays() {
+    // 1. Cập nhật trên Banner Cộng đồng
+    const communityPoint = document.getElementById('user-green-points');
+    if(communityPoint) communityPoint.innerText = currentUser.points;
+
+    // 2. Cập nhật trên Profile cá nhân (nếu đang mở)
+    const profilePoint = document.getElementById('profile-points-display');
+    if(profilePoint) profilePoint.innerText = currentUser.points.toLocaleString();
+
+    // 3. Cập nhật thanh tiến trình (Giả sử mục tiêu là 2000 điểm)
+    // Bạn có thể thêm id="progress-bar-fill" vào thanh màu vàng ở banner
+}
+       // --- 1. DỮ LIỆU SẢN PHẨM ---
+    const products = [
+        { id: 1, name: "Nến Thơm Bã Cafe", price: 95000, originalPrice: 120000, category: "decor", tag: "Tái Sinh", isEcoVerified: true, icon: "☕", detail: "Sáp đậu nành & bã cafe.", sold: 120, rating: 4.8, reviews: [{user:"Minh Anh", avatar:"https://i.pravatar.cc/150?img=5", text:"Thơm lắm!", star:5}] },
+        { id: 2, name: "Thiệp Hạt Giống", price: 45000, originalPrice: 60000, category: "office", tag: "Gieo Mầm", isEcoVerified: true, icon: "🌱", detail: "Giấy tái chế.", sold: 450, rating: 5.0, reviews: [] },
+        { id: 3, name: "Túi Thơm Vỏ Cam", price: 70000, originalPrice: 0, category: "decor", tag: "Hương Thơm", isEcoVerified: true, icon: "🍊", detail: "Hương quế tự nhiên.", sold: 88, rating: 4.5, reviews: [] },
+        { id: 4, name: "Dreamcatcher Vải", price: 120000, originalPrice: 150000, category: "decor", tag: "Thủ Công", isEcoVerified: false, icon: "🌙", detail: "Độc bản.", sold: 12, rating: 5.0, reviews: [] },
+        { id: 5, name: "Túi Tote Jeans Cũ", price: 185000, originalPrice: 250000, category: "fashion", tag: "Thời Trang", isEcoVerified: true, icon: "👜", detail: "May thủ công, bền đẹp.", sold: 30, rating: 4.9, reviews: [] },
+        { id: 6, name: "Sổ Tay Tái Chế", price: 60000, originalPrice: 80000, category: "office", tag: "Văn Phòng", isEcoVerified: true, icon: "📘", detail: "Bìa cứng, giấy ngà.", sold: 200, rating: 4.7, reviews: [] }
+    ];
+    let swapItems = [
+    { 
+        id: 101, name: "Áo len Oversize", user: "JaneDoe", condition: "95%", icon: "👕", type: "Tặng", 
+        desc: "Áo mình được tặng nhưng rộng quá không mặc vừa.",
+        comments: [
+            { user: "Thảo My", text: "Bạn ơi còn không ạ?" }
+        ]
+    },
+    { 
+        id: 102, name: "Váy Denim cũ", user: "EcoUser21", condition: "Cần 50 GP", icon: "💲", type: "Đổi điểm",
+        desc: "Váy denim vintage, chất cực đẹp.",
+        comments: []
+    }
+];
+let currentPassItemId = null; // Biến tạm để lưu ID món đồ đang định pass
+
+    // Thêm thuộc tính selected: true cho sản phẩm mặc định trong giỏ
+    let cart = [{ id: 1, qty: 1, selected: true }]; 
+    let currentProductId = null;
+    let currentCategory = 'all';
+
+    // --- 2. HÀM ĐIỀU HƯỚNG (Đã cập nhật) ---
+function switchView(viewName) {
+    // 1. Ẩn tất cả các view
+    ['home', 'cart', 'community', 'about', 'profile'].forEach(v => {
+        document.getElementById(`view-${v}`)?.classList.add('hidden');
+        document.getElementById(`nav-${v}`)?.classList.remove('text-green-700', 'font-bold');
+    });
+
+    // 2. Hiện view được chọn
+    const target = document.getElementById(`view-${viewName}`);
+    if(target) {
+        target.classList.remove('hidden');
+        
+        // Active menu (nếu có)
+        const navItem = document.getElementById(`nav-${viewName}`);
+        if(navItem) navItem.classList.add('text-green-700', 'font-bold');
+
+        // 3. LOGIC RIÊNG CHO TỪNG TRANG (Cập nhật mới)
+        if(viewName === 'cart') {
+            renderCheckoutPage(); 
+        } 
+        else if (viewName === 'profile') {
+            renderProfilePage(); // Tải dữ liệu Profile
+        }
+        else if (viewName === 'community') {
+            // Mặc định vào tab Tủ đồ khi vào Community
+            switchHubTab('wardrobe');
+        }
+
+        // 4. Luôn cập nhật điểm số mới nhất ở mọi nơi
+        if (typeof updateAllPointDisplays === "function") {
+            updateAllPointDisplays();
+        }
+
+        window.scrollTo(0,0);
+    }
+}
+function renderProfilePage() {
+    // 1. Điền thông tin cơ bản
+    document.getElementById('profile-name').innerText = currentUser.name;
+    document.getElementById('profile-title').innerText = currentUser.title;
+    document.getElementById('profile-avatar').src = currentUser.avatar;
+    document.getElementById('profile-date').innerText = currentUser.joinedDate;
+    
+    // 2. Điền thống kê
+    document.getElementById('profile-points-display').innerText = currentUser.points.toLocaleString();
+    document.getElementById('profile-trash-saved').innerText = currentUser.impact.trashSaved;
+    document.getElementById('profile-co2').innerText = currentUser.impact.co2Reduced;
+
+    // 3. Render danh sách bài đăng của tôi (Lọc từ swapItems)
+    const myPosts = swapItems.filter(item => item.user === "Bạn (Me)" || item.user === currentUser.name);
+    const postContainer = document.getElementById('profile-posts-list');
+    
+    if(myPosts.length === 0) {
+        postContainer.innerHTML = `<div class="col-span-2 text-center py-10 text-gray-400">Bạn chưa đăng bài nào. Hãy dọn tủ đồ ngay!</div>`;
+    } else {
+        postContainer.innerHTML = myPosts.map(p => `
+            <div class="flex gap-4 p-4 border border-gray-100 rounded-xl hover:shadow-md transition bg-white">
+                <div class="w-20 h-20 bg-gray-50 rounded-lg flex items-center justify-center text-3xl border border-gray-100 shrink-0">${p.icon}</div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-gray-800 line-clamp-1">${p.name}</h4>
+                        <span class="text-[10px] px-2 py-1 bg-green-100 text-green-800 rounded-full font-bold">${p.type}</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">${p.desc || 'Không có mô tả'}</p>
+                    <div class="mt-3 flex gap-2">
+                        <button onclick="switchHubTab('market'); switchView('community')" class="text-xs font-bold text-blue-600 hover:underline">Xem bài</button>
+                        <button onclick="deletePost(${p.id})" class="text-xs font-bold text-red-500 hover:underline">Xóa / Đã pass</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+        // Sửa profile (đã lưu, lịch sử,..)
+    document.getElementById('profile-name').innerText = currentUser.name;
+    document.getElementById('profile-title').innerText = currentUser.title;
+    document.getElementById('profile-avatar').src = currentUser.avatar;
+    document.getElementById('profile-date').innerText = currentUser.joinedDate;
+    document.getElementById('profile-points-display').innerText = currentUser.points.toLocaleString();
+    document.getElementById('profile-trash-saved').innerText = currentUser.impact.trashSaved;
+    document.getElementById('profile-co2').innerText = currentUser.impact.co2Reduced;
+    switchProfileTab('posts'); 
+}
+
+    // --- 4. RENDER SẢN PHẨM ---
+    function renderProducts(data = products) {
+        const container = document.getElementById('product-list');
+        const noResult = document.getElementById('no-result');
+        if (data.length === 0) { container.innerHTML = ''; noResult.classList.remove('hidden'); return; }
+        noResult.classList.add('hidden');
+
+        container.innerHTML = data.map(p => `
+            <div class="bg-[#dae1d7] rounded-xl shadow-sm border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col group overflow-hidden relative">
+                ${p.isEcoVerified ? `<div class="absolute top-0 right-0 bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg z-10 flex items-center gap-1">✓ Eco Verified</div>` : ''}
+                <div onclick="openProductDetail(${p.id})" class="h-48 bg-gray-50 flex items-center justify-center text-6xl relative cursor-pointer group-hover:scale-105 transition-transform">
+                    ${p.icon}
+                    <span class="absolute top-3 left-3 bg-green-100 text-green-800 text-[10px] font-bold px-2 py-1 rounded-full uppercase">${p.tag}</span>
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <h3 onclick="openProductDetail(${p.id})" class="font-bold text-lg text-gray-800 mb-1 cursor-pointer hover:text-green-700">${p.name}</h3>
+                    <div class="flex items-center gap-2 mb-2 text-xs text-gray-500"><span class="text-yellow-500 font-bold">★ ${p.rating}</span><span>| Đã bán ${p.sold}</span></div>
+                    <div class="mt-auto flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-xl text-red-500">${p.price.toLocaleString()}₫</span>
+                            ${p.originalPrice > p.price ? `<span class="text-xs text-gray-400 line-through block">${p.originalPrice.toLocaleString()}₫</span>` : ''}
+                        </div>
+                        <button onclick="addToCart(${p.id})" class="bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-lg text-sm font-bold shadow btn-press transition">+ Thêm</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function filterProducts() {
+        const keyword = document.getElementById('search-input').value.toLowerCase();
+        let filtered = products;
+        if (currentCategory === 'best_seller') filtered = [...products].sort((a, b) => b.sold - a.sold);
+        else if (currentCategory !== 'all') filtered = products.filter(p => p.category === currentCategory);
+        if (keyword) filtered = filtered.filter(p => p.name.toLowerCase().includes(keyword));
+        renderProducts(filtered);
+    }
+    
+    function setCategory(cat) {
+        currentCategory = cat;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active', 'bg-green-700', 'text-white'));
+        const activeBtn = document.getElementById(`btn-${cat}`);
+        if(activeBtn) activeBtn.classList.add('active', 'bg-green-700', 'text-white');
+        filterProducts();
+    }
+    
+    function renderSwap() {
+        document.getElementById('swap-list').innerHTML = swapItems.map(i => `
+            <div class="flex items-center p-3 bg-gray-50 rounded-lg shadow-sm hover:bg-green-50 transition cursor-pointer">
+                <div class="w-10 h-10 flex items-center justify-center text-2xl mr-3 bg-white rounded-full shadow-sm">${i.icon}</div>
+                <div class="flex-1">
+                    <p class="font-bold text-sm text-gray-800">${i.name}</p>
+                    <p class="text-xs text-gray-500">Người đăng: ${i.user} | ${i.condition}</p>
+                </div>
+                <span class="text-xs font-bold px-2 py-1 rounded bg-white border border-green-200 text-green-700">${i.type}</span>
+            </div>
+        `).join('');
+    }
+
+    // --- 4. LOGIC GIỎ HÀNG & CHECKBOX ---
+    function addToCart(id) { 
+        const item = cart.find(i => i.id === id); 
+        // Khi thêm mới, mặc định selected = true (được chọn mua ngay)
+        item ? item.qty++ : cart.push({id, qty:1, selected: true}); 
+        updateBadge(); 
+        alert("Đã thêm vào giỏ hàng!"); 
+    }
+
+    function updateBadge() { 
+        const count = cart.reduce((sum, item) => sum + item.qty, 0); 
+        const badge = document.getElementById('cart-badge'); 
+        count > 0 ? (badge.innerText = count, badge.classList.remove('hidden')) : badge.classList.add('hidden'); 
+    }
+
+    // Hàm bật/tắt chọn mua
+    function toggleSelect(id) {
+        const item = cart.find(i => i.id === id);
+        if (item) {
+            item.selected = !item.selected; // Đảo ngược trạng thái
+            renderCheckoutPage(); // Tính lại tiền ngay
+        }
+    }
+
+    function renderCheckoutPage() {
+        const container = document.getElementById('checkout-items');
+        if (!container) return; 
+
+        if (cart.length === 0) {
+            container.innerHTML = '<p class="text-gray-400 italic text-center py-4">Chưa có sản phẩm nào trong đơn hàng.</p>';
+            if(document.getElementById('checkout-total')) document.getElementById('checkout-total').innerText = '0₫';
+            if(document.getElementById('checkout-subtotal')) document.getElementById('checkout-subtotal').innerText = '0₫';
+            return;
+        }
+
+        let subtotal = 0;
+        let totalSavings = 0;
+        let countSelected = 0;
+
+        container.innerHTML = cart.map(item => {
+            const p = products.find(prod => prod.id === item.id);
+            if (!p) return ''; 
+            
+            // Đảm bảo item luôn có thuộc tính selected
+            if (item.selected === undefined) item.selected = true;
+
+            const itemTotal = p.price * item.qty;
+            
+            // CHỈ TÍNH TIỀN NẾU ĐƯỢC CHỌN
+            if (item.selected) {
+                subtotal += itemTotal;
+                countSelected += item.qty;
+                if (p.originalPrice > p.price) {
+                    totalSavings += (p.originalPrice - p.price) * item.qty;
+                }
+            }
+            
+            return `
+                <div class="flex items-center gap-4 py-4 border-b border-gray-50 last:border-0 ${item.selected ? '' : 'opacity-50'} transition-opacity">
+                    <div>
+                        <input type="checkbox" class="w-5 h-5 accent-green-600 cursor-pointer rounded" 
+                        ${item.selected ? 'checked' : ''} onchange="toggleSelect(${p.id})">
+                    </div>
+
+                    <div class="relative w-16 h-16 bg-[#F9F8F3] rounded-lg flex items-center justify-center text-2xl border border-gray-200 shrink-0">
+                        ${p.icon}
+                        ${p.isEcoVerified ? '<div class="absolute -top-2 -right-2 bg-green-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full z-10 shadow-sm">✓ Eco</div>' : ''}
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                            ${p.name}
+                            ${p.isEcoVerified ? '<span class="text-[10px] text-green-600 bg-green-50 border border-green-200 px-1 rounded font-bold">Verified</span>' : ''}
+                        </h4>
+                        <p class="text-xs text-gray-500 mt-1">Phân loại: ${p.tag}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-green-700 text-sm">${itemTotal.toLocaleString()}₫</p>
+                        ${p.originalPrice > p.price ? `<p class="text-xs text-gray-400 line-through">${((p.originalPrice || p.price) * item.qty).toLocaleString()}₫</p>` : ''}
+                        <p class="text-xs text-gray-400">SL: ${item.qty}</p>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Phí ship logic
+        const shippingFee = countSelected > 0 ? 15000 : 0;
+
+        const subTotalEl = document.getElementById('checkout-subtotal');
+        if(subTotalEl) {
+            subTotalEl.innerText = subtotal.toLocaleString() + '₫';
+            
+            // Cập nhật dòng phí ship
+            const summaryContainer = subTotalEl.parentElement.parentElement;
+            const shipRow = summaryContainer.children[1];
+            if(shipRow) shipRow.innerHTML = `<span>Phí vận chuyển:</span> <span class="font-medium">${shippingFee.toLocaleString()}₫</span>`;
+            
+            // Cập nhật dòng Tiết kiệm
+            const discountRow = summaryContainer.children[2]; 
+            if (discountRow) {
+                if (totalSavings > 0) {
+                    discountRow.innerHTML = `<span>Tiết kiệm được:</span> <span class="font-bold text-red-500">-${totalSavings.toLocaleString()}₫</span>`;
+                    discountRow.classList.remove('text-green-600'); 
+                    discountRow.classList.add('text-red-500'); 
+                } else {
+                    discountRow.innerHTML = `<span>Giảm giá:</span> <span class="font-medium">-0₫</span>`;
+                    discountRow.classList.remove('text-red-500');
+                    discountRow.classList.add('text-green-600');
+                }
+            }
+        }
+        
+        const totalEl = document.getElementById('checkout-total');
+        if(totalEl) totalEl.innerText = (subtotal + shippingFee).toLocaleString() + '₫'; 
+    }
+
+    // --- 5. MODAL & CHAT ---
+    function openProductDetail(id) {
+        const product = products.find(p => p.id === id);
+        currentProductId = id;
+        const reviewsHTML = product.reviews.length > 0 ? product.reviews.map(r => `<div class="border-b border-gray-100 py-4"><div class="flex items-center gap-2 mb-1"><img src="${r.avatar}" class="w-8 h-8 rounded-full"><span class="text-sm font-bold">${r.user}</span><div class="text-yellow-400 text-xs">★★★★★</div></div><p class="text-sm text-gray-600 ml-10">${r.text}</p></div>`).join('') : '<p class="text-gray-400 italic text-sm py-4">Chưa có đánh giá nào.</p>';
+        
+        document.getElementById('modal-content').innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-gray-100 rounded-xl h-64 md:h-80 flex items-center justify-center text-9xl shadow-inner relative">
+                    ${product.icon}
+                    ${product.isEcoVerified ? '<div class="absolute top-4 right-4 bg-white/90 backdrop-blur border border-green-500 text-green-700 px-3 py-1 rounded-full text-xs font-bold shadow-sm">🛡️ Verified by Dệt Mộc</div>' : ''}
+                </div>
+                <div>
+                    <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded uppercase">${product.tag}</span>
+                    <h2 class="text-3xl font-serif font-bold text-gray-800 mt-2">${product.name}</h2>
+                    <div class="flex items-center gap-4 my-3 text-sm">
+                        <span class="text-yellow-500 font-bold">${product.rating} ★</span>
+                        <span class="border-l pl-4 border-gray-300 text-gray-500">Đã bán ${product.sold}</span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4 flex items-center gap-3">
+                        <span class="text-3xl font-bold text-red-500">${product.price.toLocaleString()}₫</span>
+                        ${product.originalPrice > product.price ? `<span class="text-gray-400 line-through">${product.originalPrice.toLocaleString()}₫</span> <span class="text-xs text-red-500 bg-red-100 px-2 py-1 rounded">-Tiết kiệm ${(100 - (product.price/product.originalPrice)*100).toFixed(0)}%</span>` : ''}
+                    </div>
+                    <div class="mb-6"><h3 class="font-bold text-gray-700 mb-2">Mô tả:</h3><p class="text-gray-600 text-sm leading-relaxed">${product.detail}</p></div>
+                    <div class="border border-green-200 bg-green-50 p-3 rounded-lg text-sm mb-4">
+                        <h4 class="font-bold text-green-800 flex items-center gap-2">🌱 Cam kết Eco Verified:</h4>
+                        <ul class="list-disc list-inside text-gray-600 mt-1 pl-1">
+                            <li>Minh bạch nguồn gốc nguyên liệu tái chế.</li>
+                            <li>Hoàn tiền 110% nếu phát hiện không "xanh".</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-200"><h3 class="font-bold text-xl text-gray-800 mb-4">Đánh giá sản phẩm</h3><div class="bg-gray-50 p-6 rounded-xl">${reviewsHTML}</div></div>`;
+        document.getElementById('product-modal').classList.remove('hidden');
+    }
+    
+    function closeModal() { document.getElementById('product-modal').classList.add('hidden'); }
+    function addToCartFromModal() { if (currentProductId) { addToCart(currentProductId); closeModal(); } }
+    function toggleChat() { document.getElementById('chat-window').classList.toggle('hidden'); }
+    function openChatWithProduct() { closeModal(); toggleChat(); setTimeout(() => {const p = products.find(x=>x.id===currentProductId); sendQuickMsg(`Tư vấn giúp mình về "${p.name}"`);}, 300); }
+    function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+    function sendQuickMsg(text) { document.getElementById('chat-input').value = text; sendMessage(); }
+    function sendMessage() {
+        const input = document.getElementById('chat-input'); const text = input.value.trim(); if (!text) return;
+        addMessage(text, 'user'); input.value = '';
+        setTimeout(() => { 
+            let reply = "Cảm ơn bạn. Nhân viên sẽ sớm phản hồi ạ!";
+            if(text.toLowerCase().includes('giá')) reply = "Giá từ 45k - 185k ạ.";
+            addMessage(reply, 'bot'); 
+        }, 1000);
+    }
+    function addMessage(text, sender) { document.getElementById('chat-messages').insertAdjacentHTML('beforeend', `<div class="flex gap-2 items-end ${sender==='user'?'justify-end':''}"><div class="p-2.5 max-w-[80%] text-sm shadow-sm ${sender==='user'?'bg-green-600 text-white rounded-l-lg rounded-tr-lg':'bg-white text-gray-800 rounded-r-lg rounded-tl-lg border border-gray-100'}">${text}</div></div>`); }
+// --- 6. LOGIC TỦ ĐỒ XANH & AI (NEW) ---
+    
+    // Dữ liệu mẫu cho Tủ đồ cá nhân
+    let myWardrobe = [
+        { id: 'w1', name: "Áo Linen Trắng", material: "100% Linen", ecoTag: "Tự Nhiên", img: "👕" },
+        { id: 'w2', name: "Quần Jeans Cũ", material: "Denim", ecoTag: "Bền Vững", img: "👖" }
+    ];
+
+    let userGreenPoints = 550;
+
+    // Hàm chuyển Tab trong trang Cộng đồng
+    function switchHubTab(tabName) {
+        // Ẩn/Hiện nội dung
+        document.getElementById('hub-wardrobe').classList.add('hidden');
+        document.getElementById('hub-market').classList.add('hidden');
+        document.getElementById(`hub-${tabName}`).classList.remove('hidden');
+
+        // Style nút bấm
+        const btnW = document.getElementById('tab-wardrobe');
+        const btnM = document.getElementById('tab-market');
+        
+        if(tabName === 'wardrobe') {
+            btnW.className = "px-6 py-2 rounded-full text-sm font-bold transition-all bg-green-600 text-white shadow-md";
+            btnM.className = "px-6 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-green-600 transition-all";
+        } else {
+            btnM.className = "px-6 py-2 rounded-full text-sm font-bold transition-all bg-green-600 text-white shadow-md";
+            btnW.className = "px-6 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-green-600 transition-all";
+            renderEnhancedSwap(); // Render lại chợ khi bấm sang
+        }
+    }
+
+    // Render danh sách Tủ đồ
+    function renderWardrobe() {
+        const list = document.getElementById('my-wardrobe-list');
+        document.getElementById('wardrobe-count').innerText = `${myWardrobe.length} món`;
+        
+        list.innerHTML = myWardrobe.map(item => `
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex gap-4 group hover:border-green-300 transition">
+                <div class="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center text-3xl border border-gray-100">${item.img}</div>
+                <div class="flex-1">
+                    <h4 class="font-bold text-gray-800 text-sm">${item.name}</h4>
+                    <div class="flex gap-1 mt-1 mb-2">
+                        <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded border border-green-200">${item.material}</span>
+                        <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded border border-blue-200">${item.ecoTag}</span>
+                    </div>
+                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onclick="alert('AI Stylist: Đang tạo outfit với ${item.name}...')" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded font-bold text-gray-600">✨ Mix đồ</button>
+                        <button onclick="passItem('${item.id}')" class="text-xs bg-green-600 hover:bg-green-700 px-3 py-1 rounded font-bold text-white shadow-sm">♻️ Pass ngay</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Giả lập AI Quét ảnh
+    function triggerAIScan() {
+        const loader = document.getElementById('scan-loading');
+        loader.classList.remove('hidden'); // Hiện loading
+
+        setTimeout(() => {
+            loader.classList.add('hidden'); // Ẩn loading sau 2s
+            
+            // Tạo món đồ mới ngẫu nhiên
+            const newItem = {
+                id: 'w' + Date.now(),
+                name: "Áo Thun Organic (Mới)",
+                material: "100% Cotton",
+                ecoTag: "Eco-Friendly",
+                img: "👚"
+            };
+            
+            myWardrobe.unshift(newItem); // Thêm vào đầu danh sách
+            renderWardrobe(); // Vẽ lại giao diện
+            
+            // Cộng điểm
+            userGreenPoints += 10;
+            document.getElementById('user-green-points').innerText = userGreenPoints;
+            
+            alert(`✅ AI Hoàn tất! Phát hiện chất liệu: 100% Cotton.\nBạn nhận được +10 GreenPoints.`);
+        }, 2000);
+    }
+
+    // Chức năng Pass đồ (Chuyển từ Tủ -> Chợ)
+// 1. Mở Modal khi bấm nút "Pass ngay"
+function passItem(id) {
+    const item = myWardrobe.find(i => i.id === id);
+    if (!item) return;
+
+    currentPassItemId = id; // Lưu ID lại để xử lý sau
+    
+    // Điền thông tin vào Modal
+    document.getElementById('pass-preview-name').innerText = item.name;
+    document.getElementById('pass-preview-material').innerText = item.material;
+    document.getElementById('pass-preview-img').innerText = item.img;
+    document.getElementById('pass-desc-input').value = ''; // Reset ô nhập
+    
+    // Hiển thị Modal
+    document.getElementById('pass-modal').classList.remove('hidden');
+}
+
+// 2. Đóng Modal
+function closePassModal() {
+    document.getElementById('pass-modal').classList.add('hidden');
+}
+
+// 3. Xử lý khi bấm nút "Đăng lên cộng đồng" trong Modal
+function submitPassForm() {
+    const desc = document.getElementById('pass-desc-input').value || "Chủ cũ không để lại mô tả.";
+    const condition = document.getElementById('pass-condition-input').value;
+    const type = document.getElementById('pass-type-input').value;
+    
+    const itemIndex = myWardrobe.findIndex(i => i.id === currentPassItemId);
+    if (itemIndex === -1) return;
+    
+    const item = myWardrobe[itemIndex];
+
+    // Xóa khỏi tủ đồ
+    myWardrobe.splice(itemIndex, 1);
+    renderWardrobe();
+
+    // Thêm vào chợ
+    const newItem = {
+        id: Date.now(),
+        name: item.name,
+        user: "Bạn (Me)", // Đánh dấu là đồ của mình
+        condition: condition,
+        icon: item.img,
+        type: type === 'GreenPoints' ? 'Đổi điểm' : (type === 'Swap' ? 'Trao đổi' : 'Tặng'),
+        desc: desc,
+        comments: [] // Khởi tạo mảng comment rỗng
+    };
+
+    swapItems.unshift(newItem);
+    
+    closePassModal();
+    alert("✅ Đăng bài thành công! +15 GreenPoints");
+    switchHubTab('market'); // Chuyển sang tab chợ để xem
+}
+
+    // Render Chợ với tính năng Comment & Xóa bài
+function renderEnhancedSwap() {
+    const container = document.getElementById('swap-list-enhanced');
+    
+    if (swapItems.length === 0) {
+        container.innerHTML = '<p class="text-center text-gray-400 py-10">Chưa có bài đăng nào.</p>';
+        return;
+    }
+
+    container.innerHTML = swapItems.map(i => {
+        // Kiểm tra xem bài đăng này có phải của "Tôi" không
+        const isMyPost = i.user === "Bạn (Me)";
+        
+        // Render danh sách comments
+        const commentsHTML = i.comments.map(c => 
+            `<div class="text-xs mt-1"><span class="font-bold text-gray-700">${c.user}:</span> ${c.text}</div>`
+        ).join('');
+
+        return `
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-4 transition hover:shadow-md">
+            <div class="flex justify-between items-start mb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-xl border">${i.icon}</div>
+                    <div>
+                        <h4 class="font-bold text-gray-800 text-sm">${i.user} <span class="font-normal text-gray-500 text-xs">• vừa xong</span></h4>
+                        <span class="bg-green-100 text-green-800 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">${i.type}</span>
+                    </div>
+                </div>
+                ${isMyPost 
+                    ? `<button onclick="deletePost(${i.id})" class="text-red-500 text-xs border border-red-200 px-2 py-1 rounded hover:bg-red-50">🗑️ Đã pass / Xóa</button>` 
+                    : `<button class="text-gray-400 hover:text-gray-600 text-lg">...</button>`
+                }
+            </div>
+
+            <div class="bg-gray-50 p-3 rounded-lg mb-3">
+                <h3 class="font-bold text-gray-800 mb-1">${i.name}</h3>
+                <p class="text-sm text-gray-600 mb-2">"${i.desc}"</p>
+                <div class="flex gap-2 text-xs font-medium text-gray-500">
+                    <span class="bg-white px-2 py-1 rounded border">📦 Tình trạng: ${i.condition}</span>
+                </div>
+            </div>
+
+            <div class="border-t pt-2">
+                <div class="flex gap-4 text-sm text-gray-500 font-medium mb-2">
+                    <button onclick="saveContent('post', ${i.id})" class="hover:text-green-600 flex items-center gap-1 font-bold transition active:scale-95"> Lưu bài </button>
+                    <button onclick="toggleCommentBox(${i.id})" class="hover:text-green-600 flex items-center gap-1">💬 Bình luận (${i.comments.length})</button>
+                    <button class="hover:text-green-600 ml-auto flex items-center gap-1">✈️ Chia sẻ</button>
+                </div>
+                
+                <div id="comment-box-${i.id}" class="hidden bg-gray-50 p-2 rounded-lg mt-2 animate-in fade-in slide-in-from-top-1">
+                    <div class="space-y-2 mb-2 max-h-32 overflow-y-auto">
+                        ${commentsHTML || '<p class="text-xs text-gray-400 italic">Chưa có bình luận nào.</p>'}
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="input-comment-${i.id}" placeholder="Viết bình luận..." class="flex-1 text-xs border rounded px-2 py-1 focus:outline-none focus:border-green-500">
+                        <button onclick="postComment(${i.id})" class="text-green-600 font-bold text-xs">Gửi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+    // Hàm Xóa bài (Đánh dấu đã pass)
+function deletePost(id) {
+    if(confirm("Xác nhận món này đã được Pass xong? Bài đăng sẽ bị xóa.")) {
+        swapItems = swapItems.filter(i => i.id !== id);
+        renderEnhancedSwap();
+        alert("Đã cập nhật trạng thái thành công!");
+    }
+}
+
+// Hàm Bật/Tắt khung comment
+function toggleCommentBox(id) {
+    const box = document.getElementById(`comment-box-${id}`);
+    box.classList.toggle('hidden');
+}
+
+// Hàm Gửi comment
+function postComment(id) {
+    const input = document.getElementById(`input-comment-${id}`);
+    const text = input.value.trim();
+    if(!text) return;
+
+    const post = swapItems.find(i => i.id === id);
+    if(post) {
+        post.comments.push({ user: "Bạn", text: text }); // Thêm comment vào dữ liệu
+        renderEnhancedSwap(); // Vẽ lại giao diện
+        
+        // Mẹo: Sau khi vẽ lại, mở lại khung comment ngay lập tức để người dùng thấy
+        setTimeout(() => {
+             const newBox = document.getElementById(`comment-box-${id}`);
+             if(newBox) newBox.classList.remove('hidden');
+        }, 50);
+    }
+}
+// Hàm chuyển đổi giữa "Bài đăng" và "Outfit" trong tab Đã Lưu
+function filterSavedItems(type) {
+    const subContainer = document.getElementById('saved-sub-content');
+    const btnPosts = document.getElementById('btn-sub-posts');
+    const btnOutfits = document.getElementById('btn-sub-outfits');
+
+    // Đổi màu nút bấm
+    if (type === 'posts') {
+        btnPosts.className = "px-4 py-2 rounded-full text-sm font-bold bg-green-600 text-white shadow-md transition";
+        btnOutfits.className = "px-4 py-2 rounded-full text-sm font-bold bg-gray-100 text-gray-500 hover:bg-gray-200 transition";
+        
+        // Render danh sách Bài đăng
+        if (savedCommunityPosts.length === 0) {
+            subContainer.innerHTML = `<div class="col-span-2 text-center text-gray-400 py-8">Chưa lưu bài đăng nào.</div>`;
+        } else {
+            subContainer.innerHTML = savedCommunityPosts.map(p => `
+                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4 relative overflow-hidden">
+                    <div class="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center text-3xl border border-gray-100">${p.img}</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-gray-800 text-sm">${p.name}</h4>
+                        <p class="text-xs text-gray-500">Của: ${p.user} • <span class="text-green-600 font-bold">${p.type}</span></p>
+                        ${p.status === 'Đã pass' ? '<span class="absolute top-2 right-2 bg-gray-200 text-gray-500 text-[10px] px-2 py-1 rounded-full font-bold">Đã hết</span>' : ''}
+                    </div>
+                    <button class="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg font-bold hover:bg-red-100">Bỏ lưu</button>
+                </div>
+            `).join('');
+        }
+    } 
+    else {
+        btnOutfits.className = "px-4 py-2 rounded-full text-sm font-bold bg-green-600 text-white shadow-md transition";
+        btnPosts.className = "px-4 py-2 rounded-full text-sm font-bold bg-gray-100 text-gray-500 hover:bg-gray-200 transition";
+
+        // Render danh sách Outfit
+        if (savedAIOutfits.length === 0) {
+            subContainer.innerHTML = `<div class="col-span-2 text-center text-gray-400 py-8">Chưa lưu outfit nào.</div>`;
+        } else {
+            subContainer.innerHTML = savedAIOutfits.map(o => `
+                <div class="bg-gradient-to-br from-green-50 to-white p-4 rounded-xl border border-green-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">${o.img}</span>
+                            <div>
+                                <h4 class="font-bold text-green-800 text-sm">${o.name}</h4>
+                                <span class="text-[10px] bg-white border border-green-200 px-2 py-0.5 rounded text-gray-500">${o.style}</span>
+                            </div>
+                        </div>
+                        <button class="text-gray-400 hover:text-red-500">✕</button>
+                    </div>
+                    <div class="bg-white/60 p-2 rounded-lg text-xs text-gray-600 mb-2">
+                        <p class="font-bold mb-1">Gồm có:</p>
+                        <ul class="list-disc list-inside opacity-80">
+                            ${o.items.map(i => `<li>${i}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <button class="w-full text-xs bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700">🔍 Tìm các món này</button>
+                </div>
+            `).join('');
+        }
+    }
+}       
+    // --- INIT ---
+    renderProducts(); 
+    renderSwap(); 
+    updateBadge(); 
+    setCategory('all');
+    renderWardrobe(); 
+    </script>
+</body>
+</html>
