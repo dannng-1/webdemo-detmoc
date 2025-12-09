@@ -573,14 +573,20 @@ function updateAllPointDisplays() {
     // Bạn có thể thêm id="progress-bar-fill" vào thanh màu vàng ở banner
 }
        // --- 1. DỮ LIỆU SẢN PHẨM ---
+    // --- 1. CẬP NHẬT DỮ LIỆU SẢN PHẨM ---
     const products = [
-        { id: 1, name: "Nến Thơm Bã Cafe", price: 95000, originalPrice: 120000, category: "decor", tag: "Tái Sinh", isEcoVerified: true, icon: "☕", detail: "Sáp đậu nành & bã cafe.", sold: 120, rating: 4.8, reviews: [{user:"Minh Anh", avatar:"https://i.pravatar.cc/150?img=5", text:"Thơm lắm!", star:5}] },
-        { id: 2, name: "Thiệp Hạt Giống", price: 45000, originalPrice: 60000, category: "office", tag: "Gieo Mầm", isEcoVerified: true, icon: "🌱", detail: "Giấy tái chế.", sold: 450, rating: 5.0, reviews: [] },
-        { id: 3, name: "Túi Thơm Vỏ Cam", price: 70000, originalPrice: 0, category: "decor", tag: "Hương Thơm", isEcoVerified: true, icon: "🍊", detail: "Hương quế tự nhiên.", sold: 88, rating: 4.5, reviews: [] },
-        { id: 4, name: "Dreamcatcher Vải", price: 120000, originalPrice: 150000, category: "decor", tag: "Thủ Công", isEcoVerified: false, icon: "🌙", detail: "Độc bản.", sold: 12, rating: 5.0, reviews: [] },
-        { id: 5, name: "Túi Tote Jeans Cũ", price: 185000, originalPrice: 250000, category: "fashion", tag: "Thời Trang", isEcoVerified: true, icon: "👜", detail: "May thủ công, bền đẹp.", sold: 30, rating: 4.9, reviews: [] },
-        { id: 6, name: "Sổ Tay Tái Chế", price: 60000, originalPrice: 80000, category: "office", tag: "Văn Phòng", isEcoVerified: true, icon: "📘", detail: "Bìa cứng, giấy ngà.", sold: 200, rating: 4.7, reviews: [] }
-    ];
+    // Level 1: Handmade/Tái chế (Màu nhạt)
+    { id: 1, name: "Nến Thơm Bã Cafe", price: 95000, originalPrice: 120000, category: "decor", tag: "Tái Sinh", ecoLevel: 1, icon: "☕", detail: "Sáp đậu nành & bã cafe.", sold: 120, rating: 4.8, reviews: [] },
+    // Level 2: Local Brand có hóa đơn vải (Màu trung tính)
+    { id: 2, name: "Thiệp Hạt Giống", price: 45000, originalPrice: 60000, category: "office", tag: "Gieo Mầm", ecoLevel: 2, icon: "🌱", detail: "Giấy tái chế chuẩn OEKO-TEX.", sold: 450, rating: 5.0, reviews: [] },
+    // Level 3: Brand lớn có chứng chỉ quốc tế (Màu đậm)
+    { id: 3, name: "Túi Tote Jeans Cũ", price: 185000, originalPrice: 250000, category: "fashion", tag: "Thời Trang", ecoLevel: 1, icon: "👜", detail: "May thủ công.", sold: 30, rating: 4.9, reviews: [] },
+    // Level 3 ví dụ (Brand lớn)
+    { id: 6, name: "Áo Sơ Mi Sợi Tre", price: 350000, originalPrice: 500000, category: "fashion", tag: "Cao Cấp", ecoLevel: 3, icon: "👔", detail: "Vải Bamboo chứng nhận GOTS.", sold: 15, rating: 5.0, reviews: [] },
+    { id: 5, name: "Túi Tote Jeans Cũ", price: 185000, originalPrice: 250000, category: "fashion", tag: "Thời Trang", ecoLevel: 3, icon: "👜", detail: "May thủ công, bền đẹp.", sold: 30, rating: 4.9, reviews: [] },
+    { id: 6, name: "Sổ Tay Tái Chế", price: 60000, originalPrice: 80000, category: "office", tag: "Văn Phòng", ecoLevel: 2, icon: "📘", detail: "Bìa cứng, giấy ngà.", sold: 200, rating: 4.7, reviews: [] }
+    
+];
     let swapItems = [
     { 
         id: 101, name: "Áo len Oversize", user: "JaneDoe", condition: "95%", icon: "👕", type: "Tặng", 
@@ -685,7 +691,31 @@ function renderProfilePage() {
     document.getElementById('profile-co2').innerText = currentUser.impact.co2Reduced;
     switchProfileTab('posts'); 
 }
-
+// --- HÀM TẠO HUY HIỆU ECO ---
+function getEcoBadge(level) {
+    if (level === 1) {
+        // Cấp 1: Màu xanh nhạt - Dệt Mộc Standard
+        return `
+        <div class="absolute top-2 right-2 bg-green-100 border border-green-200 text-green-800 text-[10px] font-bold px-2 py-1 rounded-lg z-10 flex items-center gap-1 shadow-sm">
+            🌿 Standard Verification
+        </div>`;
+    } 
+    else if (level === 2) {
+        // Cấp 2: Màu xanh trung bình - Material Verified
+        return `
+        <div class="absolute top-2 right-2 bg-green-600 border border-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg z-10 flex items-center gap-1 shadow-md">
+            🛡️ Material Verification
+        </div>`;
+    } 
+    else if (level === 3) {
+        // Cấp 3: Màu xanh rêu đậm + Viền vàng - Certified Partner
+        return `
+        <div class="absolute top-2 right-2 bg-[#3A5A40] border border-yellow-400 text-white text-[10px] font-bold px-2 py-1 rounded-lg z-10 flex items-center gap-1 shadow-lg">
+            🏅 Certified Partner
+        </div>`;
+    }
+    return ''; // Không có level thì không hiện
+}
     // --- 4. RENDER SẢN PHẨM ---
     function renderProducts(data = products) {
         const container = document.getElementById('product-list');
@@ -695,25 +725,26 @@ function renderProfilePage() {
 
         container.innerHTML = data.map(p => `
             <div class="bg-[#dae1d7] rounded-xl shadow-sm border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col group overflow-hidden relative">
-                ${p.isEcoVerified ? `<div class="absolute top-0 right-0 bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg z-10 flex items-center gap-1">✓ Eco Verified</div>` : ''}
-                <div onclick="openProductDetail(${p.id})" class="h-48 bg-gray-50 flex items-center justify-center text-6xl relative cursor-pointer group-hover:scale-105 transition-transform">
-                    ${p.icon}
-                    <span class="absolute top-3 left-3 bg-green-100 text-green-800 text-[10px] font-bold px-2 py-1 rounded-full uppercase">${p.tag}</span>
-                </div>
-                <div class="p-5 flex-1 flex flex-col">
-                    <h3 onclick="openProductDetail(${p.id})" class="font-bold text-lg text-gray-800 mb-1 cursor-pointer hover:text-green-700">${p.name}</h3>
-                    <div class="flex items-center gap-2 mb-2 text-xs text-gray-500"><span class="text-yellow-500 font-bold">★ ${p.rating}</span><span>| Đã bán ${p.sold}</span></div>
-                    <div class="mt-auto flex justify-between items-center">
-                        <div>
-                            <span class="font-bold text-xl text-red-500">${p.price.toLocaleString()}₫</span>
-                            ${p.originalPrice > p.price ? `<span class="text-xs text-gray-400 line-through block">${p.originalPrice.toLocaleString()}₫</span>` : ''}
-                        </div>
-                        <button onclick="addToCart(${p.id})" class="bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-lg text-sm font-bold shadow btn-press transition">+ Thêm</button>
+                ${getEcoBadge(p.ecoLevel)}
+            <div class="h-48 bg-gray-50 flex items-center justify-center text-6xl relative group-hover:scale-105 transition-transform">
+                ${p.icon}
+                <span class="absolute top-3 left-3 bg-[#658354]/10 text-[#658354] text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase">${p.tag}</span>
+            </div>
+            
+            <div class="p-5 flex-1 flex flex-col">
+                <h3 class="font-bold text-lg text-gray-800 mb-1 line-clamp-1 hover:text-[#658354] transition">${p.name}</h3>
+                <div class="flex items-center gap-2 mb-3 text-xs text-gray-500"><span class="text-yellow-500 font-bold">★ ${p.rating}</span><span>| Đã bán ${p.sold}</span></div>
+                <div class="mt-auto flex justify-between items-center">
+                    <div>
+                        <span class="font-bold text-xl text-[#658354]">${p.price.toLocaleString()}₫</span>
+                        ${p.originalPrice > p.price ? `<span class="text-xs text-gray-400 line-through block">${p.originalPrice.toLocaleString()}₫</span>` : ''}
                     </div>
+                    <button onclick="addToCart(${p.id})" class="bg-[#658354] hover:bg-[#546e45] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm btn-press transition">+ Thêm</button>
                 </div>
             </div>
-        `).join('');
-    }
+        </div>
+    `).join('');
+}
 
     function filterProducts() {
         const keyword = document.getElementById('search-input').value.toLowerCase();
@@ -965,6 +996,7 @@ function renderProfilePage() {
                 </div>
             </div>
         `).join('');
+        
     }
 
     // Giả lập AI Quét ảnh
