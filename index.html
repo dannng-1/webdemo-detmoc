@@ -485,9 +485,9 @@ const savedAIOutfits = [
 ];
 
 const orderHistory = [
-    { id: "HD001", date: "08/12/2025", items: "Túi Tote Jeans, Sổ Tay", total: 245000, status: "Giao thành công", statusColor: "green" },
-    { id: "HD002", date: "05/12/2025", items: "Áo Len Secondhand", total: 80000, status: "Đang vận chuyển", statusColor: "orange" },
-    { id: "HD003", date: "01/12/2025", items: "Combo 3 Chai Thủy Tinh", total: 45000, status: "Đã hủy", statusColor: "red" }
+    { id: "ORD-1733683200000", date: "08/12/2025", items: [{productName: "Túi Tote Jeans", qty: 1}, {productName: "Sổ Tay", qty: 1}], total: 260000, status: "received" },
+    { id: "ORD-1733596800000", date: "05/12/2025", items: [{productName: "Áo Len Secondhand", qty: 1}], total: 95000, status: "received" },
+    { id: "ORD-1733510400000", date: "01/12/2025", items: [{productName: "Combo 3 Chai Thủy Tinh", qty: 1}], total: 60000, status: "returned" }
 ];
 
 // --- HÀM CHUYỂN TAB PROFILE ---
@@ -551,25 +551,29 @@ function switchProfileTab(tabName) {
         // Tab này dùng layout 1 cột (col-span-2)
         container.innerHTML = `
             <div class="col-span-2 space-y-3">
-                ${orderHistory.map(order => `
+                ${orderHistory.map(order => {
+                    const statusColor = order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
+                                       order.status === 'received' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                    const statusText = order.status === 'pending' ? '⏳ Đang giao' : 
+                                      order.status === 'received' ? '✅ Đã nhận' : '❌ Hoàn hàng';
+                    return `
                     <div class="flex flex-col md:flex-row md:items-center justify-between p-4 border border-gray-100 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-sm transition">
                         <div class="flex items-center gap-4 mb-2 md:mb-0">
                             <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-lg shadow-sm">📦</div>
                             <div>
                                 <p class="font-bold text-gray-800 text-sm">Đơn hàng #${order.id}</p>
-                                <p class="text-xs text-gray-500">${order.date} • ${order.items}</p>
+                                <p class="text-xs text-gray-500">${order.date} • ${order.items.map(i => i.qty + 'x ' + i.productName).join(', ')}</p>
                             </div>
                         </div>
                         <div class="flex items-center justify-between gap-6 w-full md:w-auto">
-                            <span class="text-xs font-bold px-3 py-1 rounded-full border bg-white 
-                                ${order.statusColor === 'green' ? 'text-green-600 border-green-200' : 
-                                  (order.statusColor === 'orange' ? 'text-orange-600 border-orange-200' : 'text-red-500 border-red-200')}">
-                                ${order.status}
+                            <span class="text-xs font-bold px-3 py-1 rounded-full ${statusColor}">
+                                ${statusText}
                             </span>
                             <span class="font-bold text-gray-800">${order.total.toLocaleString()}₫</span>
                         </div>
                     </div>
-                `).join('')}
+                    `;
+                }).join('')}
                 <div class="text-center mt-4">
                     <button class="text-xs text-gray-500 hover:text-green-600 underline">Xem tất cả đơn hàng cũ</button>
                 </div>
@@ -942,6 +946,14 @@ function getEcoBadge(level) {
         cart = [];
         updateBadge();
         renderCheckoutPage();
+        
+        // Scroll to order status section
+        setTimeout(() => {
+            const orderSection = document.getElementById('order-status-list');
+            if (orderSection) {
+                orderSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 300);
     }
 
     function updateOrderStatus(orderId, status) {
@@ -954,6 +966,17 @@ function getEcoBadge(level) {
             } else if (status === 'returned') {
                 showToast('📦 Yêu cầu hoàn hàng đã được gửi!', 'success');
             }
+        }
+    }
+
+    function cancelOrder(orderId) {
+        const order = orderHistory.find(o => o.id === orderId);
+        if (order && order.status === 'pending') {
+            orderHistory = orderHistory.filter(o => o.id !== orderId);
+            renderOrderStatus();
+            showToast('❌ Đơn hàng đã bị hủy!', 'warning');
+        } else {
+            showToast('⚠️ Không thể hủy đơn hàng khi nhà bán hàng đã chấp nhận!', 'warning');
         }
     }
 
@@ -989,6 +1012,7 @@ function getEcoBadge(level) {
                         ${order.status === 'pending' ? `
                             <button onclick="updateOrderStatus('${order.id}', 'received')" class="flex-1 bg-green-600 text-white py-2 rounded-lg text-xs font-bold hover:bg-green-700 transition">✅ Đã nhận hàng</button>
                             <button onclick="updateOrderStatus('${order.id}', 'returned')" class="flex-1 bg-red-600 text-white py-2 rounded-lg text-xs font-bold hover:bg-red-700 transition">🔄 Hoàn hàng</button>
+                            <button onclick="cancelOrder('${order.id}')" class="flex-1 bg-gray-500 text-white py-2 rounded-lg text-xs font-bold hover:bg-gray-600 transition">🗑️ Hủy đơn</button>
                         ` : ''}
                     </div>
                 </div>
