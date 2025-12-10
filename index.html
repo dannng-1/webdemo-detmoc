@@ -163,6 +163,14 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="mt-12 pt-8 border-t border-gray-200">
+                    <h2 class="text-2xl font-serif font-bold text-green-800 mb-6">📦 Trạng Thái Đơn Hàng</h2>
+                    <div id="order-status-list" class="space-y-4">
+                        <!-- Danh sách đơn hàng sẽ được render ở đây -->
+                        <p class="text-gray-500 italic text-center py-6">Chưa có đơn hàng nào. Hãy đặt hàng để theo dõi trạng thái!</p>
+                    </div>
+                </div>
             </div>
 
             <div id="view-community" class="hidden fade-in max-w-5xl mx-auto">
@@ -903,6 +911,90 @@ function getEcoBadge(level) {
         
         const totalEl = document.getElementById('checkout-total');
         if(totalEl) totalEl.innerText = (subtotal + shippingFee).toLocaleString() + '₫'; 
+    }
+
+    // --- ORDER TRACKING FUNCTIONS ---
+    let orderHistory = [];
+
+    function createOrder() {
+        const selectedItems = cart.filter(item => item.selected);
+        if (selectedItems.length === 0) {
+            showToast("Vui lòng chọn ít nhất 1 sản phẩm!", 'warning');
+            return;
+        }
+
+        const newOrder = {
+            id: 'ORD-' + Date.now(),
+            items: selectedItems.map(item => {
+                const product = products.find(p => p.id === item.id);
+                return { productId: item.id, productName: product.name, qty: item.qty, price: product.price };
+            }),
+            status: 'pending', // pending, received, returned
+            date: new Date().toLocaleDateString('vi-VN'),
+            total: selectedItems.reduce((sum, item) => {
+                const product = products.find(p => p.id === item.id);
+                return sum + (product.price * item.qty);
+            }, 0) + 15000
+        };
+
+        orderHistory.unshift(newOrder);
+        renderOrderStatus();
+        showToast('✅ Đặt hàng thành công! Đơn hàng #' + newOrder.id, 'success');
+        cart = [];
+        updateBadge();
+        renderCheckoutPage();
+    }
+
+    function updateOrderStatus(orderId, status) {
+        const order = orderHistory.find(o => o.id === orderId);
+        if (order) {
+            order.status = status;
+            renderOrderStatus();
+            if (status === 'received') {
+                showToast('✅ Cảm ơn bạn đã nhận hàng!', 'success');
+            } else if (status === 'returned') {
+                showToast('📦 Yêu cầu hoàn hàng đã được gửi!', 'success');
+            }
+        }
+    }
+
+    function renderOrderStatus() {
+        const container = document.getElementById('order-status-list');
+        if (!container) return;
+
+        if (orderHistory.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 italic text-center py-6">Chưa có đơn hàng nào. Hãy đặt hàng để theo dõi trạng thái!</p>';
+            return;
+        }
+
+        container.innerHTML = orderHistory.map(order => {
+            const statusColor = order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
+                               order.status === 'received' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+            const statusText = order.status === 'pending' ? '⏳ Đang giao' : 
+                              order.status === 'received' ? '✅ Đã nhận' : '❌ Hoàn hàng';
+            
+            return `
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <p class="font-bold text-gray-800">Đơn hàng ${order.id}</p>
+                            <p class="text-xs text-gray-500">${order.date}</p>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full ${statusColor}">${statusText}</span>
+                    </div>
+                    <div class="mb-3 text-sm text-gray-600">
+                        <p>${order.items.map(i => i.qty + 'x ' + i.productName).join(', ')}</p>
+                        <p class="font-bold text-gray-800 mt-1">Tổng: ${order.total.toLocaleString()}₫</p>
+                    </div>
+                    <div class="flex gap-2">
+                        ${order.status === 'pending' ? `
+                            <button onclick="updateOrderStatus('${order.id}', 'received')" class="flex-1 bg-green-600 text-white py-2 rounded-lg text-xs font-bold hover:bg-green-700 transition">✅ Đã nhận hàng</button>
+                            <button onclick="updateOrderStatus('${order.id}', 'returned')" class="flex-1 bg-red-600 text-white py-2 rounded-lg text-xs font-bold hover:bg-red-700 transition">🔄 Hoàn hàng</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     // --- 5. MODAL & CHAT ---
