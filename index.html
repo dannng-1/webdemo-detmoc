@@ -10,18 +10,26 @@
         body { font-family: 'Inter', sans-serif; background-color: #c3ffba; }
         .font-serif { font-family: 'Merriweather', serif; }
         .hidden { display: none; }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast-msg { animation: slideInRight 0.5s ease-out forwards; }
         .btn-press:active { transform: scale(0.95); }
         .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .modal-backdrop { background-color: rgba(0, 0, 0, 0.5); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .filter-btn.active { background-color: #33ad60; color: white; border-color: #1fc35b; }
+    /* Animation cho Toast Notification */
+        @keyframes slideInRight { 
+         from { transform: translateX(100%); opacity: 0; } 
+          to { transform: translateX(0); opacity: 1; } 
+        }
+        .toast-msg { 
+         animation: slideInRight 0.4s ease-out forwards; 
+        }
     </style>
 </head>
 <body class="text-gray-800">
-
-    <div class="w-full mx-auto bg-white min-h-screen shadow-2xl flex flex-col border-x border-gray-200 relative">
-        
+<div id="toast-container" class="fixed top-24 right-6 z-[200] flex flex-col gap-3 pointer-events-none"></div>    <div class="w-full mx-auto bg-white min-h-screen shadow-2xl flex flex-col border-x border-gray-200 relative">
         <header class="sticky top-0 bg-white/95 backdrop-blur z-40 border-b border-gray-100 px-6 py-4 flex justify-between items-center">
             <div onclick="switchView('home')" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
                 <span class="text-2xl">🌿</span>
@@ -151,7 +159,7 @@
                                 <span class="font-bold text-gray-800">Tổng cộng:</span>
                                 <span id="checkout-total" class="text-3xl font-bold text-red-500 font-serif">0₫</span>
                             </div>
-                            <button onclick="alert('Đặt hàng thành công! Cảm ơn bạn đã sống xanh 🌿')" class="w-full bg-[#4E7C32] text-white py-4 rounded-xl font-bold hover:bg-[#3d6326] transition shadow-lg btn-press mb-4">ĐẶT HÀNG NGAY</button>
+                            <button onclick="showToast('Đặt hàng thành công! Cảm ơn bạn đã sống xanh 🌿')" class="w-full bg-[#4E7C32] text-white py-4 rounded-xl font-bold hover:bg-[#3d6326] transition shadow-lg btn-press mb-4">ĐẶT HÀNG NGAY</button>
                             <p class="text-xs text-center text-gray-400">Cam kết bảo mật thông tin 100%</p>
                         </div>
                     </div>
@@ -367,12 +375,16 @@
             <button onclick="closePassModal()" class="hover:bg-green-600 rounded-full p-1">✕</button>
         </div>
         <div class="p-6 space-y-4">
+            <div class="bg-blue-50 p-3 rounded-xl border border-blue-200">
+                <p class="text-sm text-gray-600">Sản phẩm: <span id="pass-preview-name" class="font-bold text-blue-700">-</span></p>
+                <p class="text-sm text-gray-600">Chất liệu: <span id="pass-preview-material" class="font-bold text-blue-700">-</span></p>
+            </div>
             <div class="flex items-center gap-4 bg-gray-50 p-3 rounded-xl border border-gray-200">
-                <div id="pass-preview-img" class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-2xl shadow-sm border"></div>
-                <div>
-                    <h4 id="pass-preview-name" class="font-bold text-gray-800 text-sm">Tên món đồ</h4>
-                    <span id="pass-preview-material" class="text-xs text-gray-500">Chất liệu</span>
-                </div>
+                <input type="file" id="real-file-upload" class="hidden" accept="image/*" onchange="previewImage(this)">
+                    <div onclick="document.getElementById('real-file-upload').click()" id="pass-preview-area" class="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300 cursor-pointer hover:border-[#658354] overflow-hidden relative">
+                   <span id="upload-placeholder" class="text-gray-400 text-xs text-center">📸<br>Tải ảnh</span>
+                   <img id="upload-preview" class="hidden w-full h-full object-cover">
+                    </div>
             </div>
 
             <div>
@@ -440,9 +452,9 @@ function saveContent(type, id) {
                     img: item.icon,
                     status: "Đang hiển thị"
                 });
-                alert("✅ Đã lưu bài viết vào Profile!");
+                showToast("✅ Đã lưu bài viết vào Profile!");
             } else {
-                alert("⚠️ Bạn đã lưu bài này rồi!");
+                showToast("⚠️ Bạn đã lưu bài này rồi!");
             }
         }
     } 
@@ -457,7 +469,7 @@ function saveContent(type, id) {
             date: new Date().toLocaleDateString('vi-VN')
         };
         savedAIOutfits.unshift(newOutfit);
-        alert("✅ Đã lưu Outfit vào bộ sưu tập!");
+        showToast("✅ Đã lưu Outfit vào bộ sưu tập!");
     }
 }
 const savedAIOutfits = [
@@ -724,27 +736,30 @@ function getEcoBadge(level) {
         noResult.classList.add('hidden');
 
         container.innerHTML = data.map(p => `
-            <div class="bg-[#dae1d7] rounded-xl shadow-sm border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col group overflow-hidden relative">
+            <div onclick="openProductDetail(${p.id})" class="cursor-pointer bg-[#dae1d7] rounded-xl shadow-sm border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col group overflow-hidden relative">
+                
                 ${getEcoBadge(p.ecoLevel)}
-            <div class="h-48 bg-gray-50 flex items-center justify-center text-6xl relative group-hover:scale-105 transition-transform">
-                ${p.icon}
-                <span class="absolute top-3 left-3 bg-[#658354]/10 text-[#658354] text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase">${p.tag}</span>
-            </div>
-            
-            <div class="p-5 flex-1 flex flex-col">
-                <h3 class="font-bold text-lg text-gray-800 mb-1 line-clamp-1 hover:text-[#658354] transition">${p.name}</h3>
-                <div class="flex items-center gap-2 mb-3 text-xs text-gray-500"><span class="text-yellow-500 font-bold">★ ${p.rating}</span><span>| Đã bán ${p.sold}</span></div>
-                <div class="mt-auto flex justify-between items-center">
-                    <div>
-                        <span class="font-bold text-xl text-[#658354]">${p.price.toLocaleString()}₫</span>
-                        ${p.originalPrice > p.price ? `<span class="text-xs text-gray-400 line-through block">${p.originalPrice.toLocaleString()}₫</span>` : ''}
+                
+                <div class="h-48 bg-gray-50 flex items-center justify-center text-6xl relative group-hover:scale-105 transition-transform">
+                    ${p.icon}
+                    <span class="absolute top-3 left-3 bg-[#658354]/10 text-[#658354] text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase">${p.tag}</span>
+                </div>
+                
+                <div class="p-5 flex-1 flex flex-col">
+                    <h3 class="font-bold text-lg text-gray-800 mb-1 line-clamp-1 hover:text-[#658354] transition">${p.name}</h3>
+                    <div class="flex items-center gap-2 mb-3 text-xs text-gray-500"><span class="text-yellow-500 font-bold">★ ${p.rating}</span><span>| Đã bán ${p.sold}</span></div>
+                    
+                    <div class="mt-auto flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-xl text-[#658354]">${p.price.toLocaleString()}₫</span>
+                            ${p.originalPrice > p.price ? `<span class="text-xs text-gray-400 line-through block">${p.originalPrice.toLocaleString()}₫</span>` : ''}
+                        </div>
+                        <button onclick="event.stopPropagation(); addToCart(${p.id})" class="bg-[#658354] hover:bg-[#546e45] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm btn-press transition">+ Thêm</button>
                     </div>
-                    <button onclick="addToCart(${p.id})" class="bg-[#658354] hover:bg-[#546e45] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm btn-press transition">+ Thêm</button>
                 </div>
             </div>
-        </div>
-    `).join('');
-}
+        `).join('');
+    }
 
     function filterProducts() {
         const keyword = document.getElementById('search-input').value.toLowerCase();
@@ -782,7 +797,7 @@ function getEcoBadge(level) {
         // Khi thêm mới, mặc định selected = true (được chọn mua ngay)
         item ? item.qty++ : cart.push({id, qty:1, selected: true}); 
         updateBadge(); 
-        alert("Đã thêm vào giỏ hàng!"); 
+        showToast("Đã thêm vào giỏ hàng!"); 
     }
 
     function updateBadge() { 
@@ -892,41 +907,192 @@ function getEcoBadge(level) {
     }
 
     // --- 5. MODAL & CHAT ---
-    function openProductDetail(id) {
-        const product = products.find(p => p.id === id);
-        currentProductId = id;
-        const reviewsHTML = product.reviews.length > 0 ? product.reviews.map(r => `<div class="border-b border-gray-100 py-4"><div class="flex items-center gap-2 mb-1"><img src="${r.avatar}" class="w-8 h-8 rounded-full"><span class="text-sm font-bold">${r.user}</span><div class="text-yellow-400 text-xs">★★★★★</div></div><p class="text-sm text-gray-600 ml-10">${r.text}</p></div>`).join('') : '<p class="text-gray-400 italic text-sm py-4">Chưa có đánh giá nào.</p>';
-        
-        document.getElementById('modal-content').innerHTML = `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-gray-100 rounded-xl h-64 md:h-80 flex items-center justify-center text-9xl shadow-inner relative">
-                    ${product.icon}
-                    ${product.isEcoVerified ? '<div class="absolute top-4 right-4 bg-white/90 backdrop-blur border border-green-500 text-green-700 px-3 py-1 rounded-full text-xs font-bold shadow-sm">🛡️ Verified by Dệt Mộc</div>' : ''}
+    // Biến lưu số sao người dùng đang chọn (mặc định 5)
+let currentRatingSelected = 5;
+
+function openProductDetail(id) {
+    const product = products.find(p => p.id === id);
+    currentProductId = id;
+    currentRatingSelected = 5; // Reset về 5 sao mỗi khi mở
+
+    // 1. Tạo danh sách đánh giá cũ
+    const reviewsHTML = product.reviews.length > 0 
+        ? product.reviews.map(r => `
+            <div class="border-b border-gray-100 py-3 last:border-0">
+                <div class="flex items-center gap-2 mb-1">
+                    <img src="${r.avatar || 'https://i.pravatar.cc/150?img=68'}" class="w-8 h-8 rounded-full border border-gray-200">
+                    <div>
+                        <span class="text-sm font-bold text-gray-800 block leading-tight">${r.user}</span>
+                        <div class="text-yellow-400 text-xs tracking-tighter">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div>
+                    </div>
+                    <span class="text-[10px] text-gray-400 ml-auto">${r.date || 'Vừa xong'}</span>
                 </div>
-                <div>
-                    <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded uppercase">${product.tag}</span>
-                    <h2 class="text-3xl font-serif font-bold text-gray-800 mt-2">${product.name}</h2>
-                    <div class="flex items-center gap-4 my-3 text-sm">
-                        <span class="text-yellow-500 font-bold">${product.rating} ★</span>
-                        <span class="border-l pl-4 border-gray-300 text-gray-500">Đã bán ${product.sold}</span>
-                    </div>
-                    <div class="bg-gray-50 p-4 rounded-lg mb-4 flex items-center gap-3">
-                        <span class="text-3xl font-bold text-red-500">${product.price.toLocaleString()}₫</span>
-                        ${product.originalPrice > product.price ? `<span class="text-gray-400 line-through">${product.originalPrice.toLocaleString()}₫</span> <span class="text-xs text-red-500 bg-red-100 px-2 py-1 rounded">-Tiết kiệm ${(100 - (product.price/product.originalPrice)*100).toFixed(0)}%</span>` : ''}
-                    </div>
-                    <div class="mb-6"><h3 class="font-bold text-gray-700 mb-2">Mô tả:</h3><p class="text-gray-600 text-sm leading-relaxed">${product.detail}</p></div>
-                    <div class="border border-green-200 bg-green-50 p-3 rounded-lg text-sm mb-4">
-                        <h4 class="font-bold text-green-800 flex items-center gap-2">🌱 Cam kết Eco Verified:</h4>
-                        <ul class="list-disc list-inside text-gray-600 mt-1 pl-1">
-                            <li>Minh bạch nguồn gốc nguyên liệu tái chế.</li>
-                            <li>Hoàn tiền 110% nếu phát hiện không "xanh".</li>
-                        </ul>
-                    </div>
+                    <p class="text-sm text-gray-600 ml-10 bg-gray-50 p-2 rounded-lg">${r.text}</p>
+                    ${r.photos && r.photos.length ? r.photos.map(p => `<img src="${p}" class="ml-10 mt-2 max-w-[120px] h-auto rounded-lg border border-gray-200 shadow-sm hover:scale-110 transition cursor-pointer" onclick="showImageModal('${p}')">`).join('') : ''}
+            </div>`).join('') 
+        : '<p class="text-gray-400 italic text-sm py-4 text-center">Chưa có đánh giá nào. Hãy là người đầu tiên!</p>';
+
+    // 2. Logic text Eco Level (như cũ)
+    let levelText = "";
+    if (product.ecoLevel === 1) levelText = "✅ Đạt chuẩn Dệt Mộc Standard: An toàn vật lý.";
+    if (product.ecoLevel === 2) levelText = "🛡️ Đạt chuẩn Material Verified: Nguyên liệu có nguồn gốc.";
+    if (product.ecoLevel === 3) levelText = "🏅 Đối Tác Certified Partner: Thương hiệu quốc tế.";
+
+    // 3. Render HTML Modal
+    document.getElementById('modal-content').innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-[#dae1d7] rounded-xl h-64 md:h-80 flex items-center justify-center text-9xl shadow-inner relative">
+                ${product.icon}
+                ${getEcoBadge(product.ecoLevel)}
+            </div>
+            
+            <div>
+                <span class="bg-[#658354]/10 text-[#658354] text-xs font-bold px-2 py-1 rounded-lg uppercase">${product.tag}</span>
+                <h2 class="text-3xl font-serif font-bold text-gray-800 mt-2">${product.name}</h2>
+                <div class="flex items-center gap-4 my-3 text-sm">
+                    <span class="text-yellow-500 font-bold text-lg">${product.rating} ★</span>
+                    <span class="border-l pl-4 border-gray-300 text-gray-500">Đã bán ${product.sold}</span>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-xl mb-4 flex items-center gap-3 border border-gray-100">
+                    <span class="text-3xl font-bold text-[#658354]">${product.price.toLocaleString()}₫</span>
+                    ${product.originalPrice > product.price ? `<span class="text-gray-400 line-through text-sm">${product.originalPrice.toLocaleString()}₫</span>` : ''}
+                </div>
+                <div class="mb-6">
+                    <h3 class="font-bold text-gray-700 mb-2">Mô tả:</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">${product.detail}</p>
+                </div>
+                <div class="border border-green-200 bg-green-50/50 p-3 rounded-xl text-sm mb-4">
+                    <h4 class="font-bold text-[#658354] flex items-center gap-2 mb-1">🌱 Cam kết Eco:</h4>
+                    <p class="text-gray-600 text-xs">${levelText}</p>
                 </div>
             </div>
-            <div class="mt-8 pt-8 border-t border-gray-200"><h3 class="font-bold text-xl text-gray-800 mb-4">Đánh giá sản phẩm</h3><div class="bg-gray-50 p-6 rounded-xl">${reviewsHTML}</div></div>`;
-        document.getElementById('product-modal').classList.remove('hidden');
+        </div>
+
+        <div class="mt-8 pt-8 border-t border-gray-200">
+            <h3 class="font-bold text-xl text-gray-800 mb-4">Đánh giá sản phẩm (${product.reviews.length})</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-2 space-y-2 max-h-60 overflow-y-auto pr-2 scrollbar-hide">
+                    ${reviewsHTML}
+                </div>
+
+                <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm h-fit">
+                    <h4 class="font-bold text-sm text-gray-700 mb-3">Viết đánh giá của bạn</h4>
+                    
+                    <div class="flex gap-1 mb-3 cursor-pointer" id="star-selector">
+                        ${[1,2,3,4,5].map(i => `<span onclick="selectStar(${i})" class="text-2xl transition hover:scale-110 ${i <= 5 ? 'text-yellow-400' : 'text-gray-300'}" id="star-${i}">★</span>`).join('')}
+                    </div>
+
+                    <textarea id="review-input" rows="3" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:outline-none focus:border-[#658354] bg-gray-50 mb-3" placeholder="Sản phẩm thế nào..."></textarea>
+                    
+                    <button onclick="submitReview(${product.id})" class="w-full bg-[#658354] hover:bg-[#546e45] text-white py-2 rounded-lg text-sm font-bold shadow-sm transition">Gửi Đánh Giá</button>
+                        <div class="mt-3 border-t border-gray-200 pt-3">
+                            <label class="text-xs font-bold text-gray-700 mb-2 block">📸 Tải Ảnh Sản Phẩm</label>
+                            <input type="file" id="review-photo-input" accept="image/*" onchange="previewReviewPhotos(this)" class="hidden" multiple>
+                            <button onclick="document.getElementById('review-photo-input').click()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-1.5 rounded-lg text-xs font-bold transition">Chọn Ảnh</button>
+                            <div id="review-photo-preview" class="mt-2 hidden">
+                                <div id="review-photo-thumbs" class="flex gap-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <h4 class="font-bold text-sm text-gray-700 mb-3">Lọc Đánh Giá</h4>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button onclick="filterReviews('all')" class="filter-review-btn active px-3 py-1.5 rounded-full text-xs font-bold border border-green-400 bg-green-100 text-green-700">
+                            Tất cả (${product.reviews.length})
+                        </button>
+                        <button onclick="filterReviews('5')" class="filter-review-btn px-3 py-1.5 rounded-full text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50">
+                            ⭐⭐⭐⭐⭐ (${product.reviews.filter(r => r.star === 5).length})
+                        </button>
+                        <button onclick="filterReviews('4')" class="filter-review-btn px-3 py-1.5 rounded-full text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50">
+                            ⭐⭐⭐⭐ (${product.reviews.filter(r => r.star === 4).length})
+                        </button>
+                        <button onclick="filterReviews('3')" class="filter-review-btn px-3 py-1.5 rounded-full text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50">
+                            ⭐⭐⭐ (${product.reviews.filter(r => r.star === 3).length})
+                        </button>
+                        <button onclick="filterReviews('2')" class="filter-review-btn px-3 py-1.5 rounded-full text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50">
+                            ⭐⭐ (${product.reviews.filter(r => r.star === 2).length})
+                        </button>
+                        <button onclick="filterReviews('1')" class="filter-review-btn px-3 py-1.5 rounded-full text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50">
+                            ⭐ (${product.reviews.filter(r => r.star === 1).length})
+                        </button>
+                    </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('product-modal').classList.remove('hidden');
+}
+    // --- LOGIC ĐÁNH GIÁ SẢN PHẨM ---
+
+// 1. Hàm chọn sao (Giao diện)
+function selectStar(star) {
+    currentRatingSelected = star;
+    for (let i = 1; i <= 5; i++) {
+        const starEl = document.getElementById(`star-${i}`);
+        if (i <= star) {
+            starEl.classList.remove('text-gray-300');
+            starEl.classList.add('text-yellow-400');
+        } else {
+            starEl.classList.remove('text-yellow-400');
+            starEl.classList.add('text-gray-300');
+        }
     }
+}
+
+// 2. Hàm gửi đánh giá (Xử lý dữ liệu)
+function submitReview(productId) {
+    const input = document.getElementById('review-input');
+    const text = input.value.trim();
+    
+    if (!text) {
+        showToast("Vui lòng nhập nội dung đánh giá!");
+        return;
+    }
+
+    const product = products.find(p => p.id === productId);
+
+    // Thêm review mới vào mảng
+    const newReview = {
+        user: currentUser.name || "Khách ẩn danh", // Lấy tên từ biến currentUser
+        avatar: currentUser.avatar,
+        text: text,
+        star: currentRatingSelected,
+        photos: Array.isArray(currentReviewPhotos) ? currentReviewPhotos.slice() : (currentReviewPhotos ? [currentReviewPhotos] : []),
+        date: new Date().toLocaleDateString('vi-VN')
+    };
+    
+    product.reviews.unshift(newReview); // Thêm lên đầu
+
+    // Tính lại điểm trung bình (Rating Average)
+    const totalStars = product.reviews.reduce((sum, r) => sum + r.star, 0);
+    product.rating = (totalStars / product.reviews.length).toFixed(1);
+
+    // Cập nhật giao diện
+    showToast("Cảm ơn bạn đã đánh giá! +5 GreenPoints", 'success');
+    currentUser.points += 5; // Cộng điểm thưởng
+    // Thưởng thêm +100 GreenPoints nếu upload >= 2 ảnh
+    if (newReview.photos && newReview.photos.length >= 2) {
+        currentUser.points += 100;
+        showToast("🎉 Bạn nhận thêm +100 GreenPoints vì upload >= 2 ảnh!", 'success');
+    }
+    updateAllPointDisplays();
+    
+    // Reset form
+    input.value = '';
+    currentReviewPhotos = [];
+    const photoPreview = document.getElementById('review-photo-preview');
+    if (photoPreview) {
+        photoPreview.classList.add('hidden');
+        const thumbs = document.getElementById('review-photo-thumbs'); if (thumbs) thumbs.innerHTML = '';
+    }
+    const fileInput = document.getElementById('review-photo-input');
+    if (fileInput) fileInput.value = '';
+    
+    openProductDetail(productId); // Vẽ lại modal để hiện review mới
+    renderProducts(); // Vẽ lại danh sách ngoài trang chủ để cập nhật số sao
+}
     
     function closeModal() { document.getElementById('product-modal').classList.add('hidden'); }
     function addToCartFromModal() { if (currentProductId) { addToCart(currentProductId); closeModal(); } }
@@ -944,6 +1110,110 @@ function getEcoBadge(level) {
         }, 1000);
     }
     function addMessage(text, sender) { document.getElementById('chat-messages').insertAdjacentHTML('beforeend', `<div class="flex gap-2 items-end ${sender==='user'?'justify-end':''}"><div class="p-2.5 max-w-[80%] text-sm shadow-sm ${sender==='user'?'bg-green-600 text-white rounded-l-lg rounded-tr-lg':'bg-white text-gray-800 rounded-r-lg rounded-tl-lg border border-gray-100'}">${text}</div></div>`); }
+
+    // ===== HÀM REVIEW & PHOTO UPLOAD =====
+    let currentReviewPhotos = [];
+
+    // Hàm preview nhiều ảnh review
+    function previewReviewPhotos(input) {
+        const files = Array.from(input.files || []);
+        currentReviewPhotos = [];
+        const thumbs = document.getElementById('review-photo-thumbs');
+        if (thumbs) thumbs.innerHTML = '';
+
+        if (files.length === 0) {
+            document.getElementById('review-photo-preview')?.classList.add('hidden');
+            return;
+        }
+
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentReviewPhotos.push(e.target.result);
+                const imgEl = document.createElement('img');
+                imgEl.src = e.target.result;
+                imgEl.className = 'w-24 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer';
+                imgEl.onclick = () => showImageModal(e.target.result);
+                thumbs.appendChild(imgEl);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('review-photo-preview')?.classList.remove('hidden');
+    }
+
+    // Hàm lọc review theo số sao
+    let currentReviewFilter = 'all';
+    function filterReviews(filterType) {
+        currentReviewFilter = filterType;
+    
+        // Cập nhật giao diện nút
+        document.querySelectorAll('.filter-review-btn').forEach(btn => {
+            btn.classList.remove('active', 'bg-green-100', 'border-green-400', 'text-green-700');
+            btn.classList.add('border-gray-200', 'text-gray-600');
+        });
+        event.target.classList.add('active', 'bg-green-100', 'border-green-400', 'text-green-700');
+    
+        // Lọc và hiển thị reviews
+        const product = products.find(p => p.id === currentProductId);
+        const filteredReviews = filterType === 'all' 
+            ? product.reviews 
+            : product.reviews.filter(r => r.star === parseInt(filterType));
+    
+        // Cập nhật hiển thị reviews
+        const reviewsList = document.querySelector('.md\\:col-span-2.space-y-2');
+        if (filteredReviews.length === 0) {
+            reviewsList.innerHTML = '<p class="text-gray-400 italic text-sm py-4 text-center">Không có đánh giá nào cho lọc này</p>';
+        } else {
+            reviewsList.innerHTML = filteredReviews.map(r => `
+                <div class="border-b border-gray-100 py-3 last:border-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <img src="${r.avatar || 'https://i.pravatar.cc/150?img=68'}" class="w-8 h-8 rounded-full border border-gray-200">
+                        <div>
+                            <span class="text-sm font-bold text-gray-800 block leading-tight">${r.user}</span>
+                            <div class="text-yellow-400 text-xs tracking-tighter">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div>
+                        </div>
+                        <span class="text-[10px] text-gray-400 ml-auto">${r.date || 'Vừa xong'}</span>
+                    </div>
+                    <p class="text-sm text-gray-600 ml-10 bg-gray-50 p-2 rounded-lg">${r.text}</p>
+                    ${r.photos && r.photos.length ? r.photos.map(p => `<img src="${p}" class="ml-10 mt-2 max-w-[120px] h-auto rounded-lg border border-gray-200 shadow-sm hover:scale-110 transition cursor-pointer" onclick="showImageModal('${p}')">`).join('') : ''}
+                </div>
+            `).join('');
+        }
+    }
+
+    // Hàm kiểm tra spam/đánh giá không liên quan
+    function isSpamReview(text, rating) {
+        const spamKeywords = ['spam', 'quảng cáo', 'liên hệ', 'facebook', 'zalo', 'telegram', 'xxx', 'visit', 'click', 'link', 'http'];
+        const textLower = text.toLowerCase();
+    
+        // Kiểm tra spam keywords
+        for (let keyword of spamKeywords) {
+            if (textLower.includes(keyword)) return true;
+        }
+    
+        // Kiểm tra bình luận quá ngắn
+        if (text.trim().length < 10) return true;
+    
+        // Kiểm tra bình luận không liên quan đến sản phẩm
+        const productKeywords = ['sản phẩm', 'đồ', 'áo', 'quần', 'chất', 'kích thước', 'size', 'màu', 'giá', 'chất lượng', 'đẹp', 'xấu', 'tốt', 'dở', 'vừa', 'hơi'];
+        const hasRelevantKeyword = productKeywords.some(kw => textLower.includes(kw));
+    
+        if (!hasRelevantKeyword && rating < 3) return true;
+    
+        return false;
+    }
+
+    // Hàm hiển thị ảnh phóng to
+    function showImageModal(imageSrc) {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4';
+        modal.onclick = () => modal.remove();
+        modal.innerHTML = `
+            <img src="${imageSrc}" class="max-w-full max-h-[90vh] rounded-xl shadow-2xl" onclick="event.stopPropagation()">
+        `;
+        document.body.appendChild(modal);
+    }
 // --- 6. LOGIC TỦ ĐỒ XANH & AI (NEW) ---
     
     // Dữ liệu mẫu cho Tủ đồ cá nhân
@@ -990,7 +1260,7 @@ function getEcoBadge(level) {
                         <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded border border-blue-200">${item.ecoTag}</span>
                     </div>
                     <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onclick="alert('AI Stylist: Đang tạo outfit với ${item.name}...')" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded font-bold text-gray-600">✨ Mix đồ</button>
+                        <button onclick="showToast('AI Stylist: Đang tạo outfit với ${item.name}...')" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded font-bold text-gray-600">✨ Mix đồ</button>
                         <button onclick="passItem('${item.id}')" class="text-xs bg-green-600 hover:bg-green-700 px-3 py-1 rounded font-bold text-white shadow-sm">♻️ Pass ngay</button>
                     </div>
                 </div>
@@ -1023,23 +1293,69 @@ function getEcoBadge(level) {
             userGreenPoints += 10;
             document.getElementById('user-green-points').innerText = userGreenPoints;
             
-            alert(`✅ AI Hoàn tất! Phát hiện chất liệu: 100% Cotton.\nBạn nhận được +10 GreenPoints.`);
+            showToast(`✅ AI Hoàn tất! Phát hiện chất liệu: 100% Cotton.\nBạn nhận được +10 GreenPoints.`);
         }, 2000);
     }
 
-    // Chức năng Pass đồ (Chuyển từ Tủ -> Chợ)
-// 1. Mở Modal khi bấm nút "Pass ngay"
+// 1. Hàm hiển thị thông báo đẹp (Thay thế alert)
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    const bgColor = type === 'success' ? 'bg-[#658354]' : (type === 'error' ? 'bg-red-500' : 'bg-blue-500');
+    const icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
+    
+    toast.className = `${bgColor} text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 toast-msg min-w-[300px] border border-white/20 backdrop-blur-sm pointer-events-auto`;
+    toast.innerHTML = `<span class="text-xl">${icon}</span> <span class="font-bold text-sm">${message}</span>`;
+    
+    container.appendChild(toast);
+    setTimeout(() => { 
+        toast.style.opacity = '0'; 
+        toast.style.transform = 'translateY(-20px)'; 
+        toast.style.transition = 'all 0.5s ease'; 
+        setTimeout(() => toast.remove(), 500); 
+    }, 3000);
+}
+
+// 2. Hàm xem trước ảnh khi upload (QUAN TRỌNG)
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('upload-preview').src = e.target.result;
+            document.getElementById('upload-preview').classList.remove('hidden');
+            document.getElementById('upload-placeholder').classList.add('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// --- CÁC HÀM XỬ LÝ PASS ĐỒ ---
+
+// 1. Mở Modal (Đã sửa lỗi ID ảnh)
 function passItem(id) {
     const item = myWardrobe.find(i => i.id === id);
     if (!item) return;
 
-    currentPassItemId = id; // Lưu ID lại để xử lý sau
+    currentPassItemId = id; 
     
-    // Điền thông tin vào Modal
+    // Điền thông tin tên và chất liệu
     document.getElementById('pass-preview-name').innerText = item.name;
     document.getElementById('pass-preview-material').innerText = item.material;
-    document.getElementById('pass-preview-img').innerText = item.img;
-    document.getElementById('pass-desc-input').value = ''; // Reset ô nhập
+    
+    // --- QUAN TRỌNG: Reset lại khung upload ảnh ---
+    // (Xóa ảnh cũ của lần đăng trước nếu có)
+    const fileInput = document.getElementById('real-file-upload');
+    const imgPreview = document.getElementById('upload-preview');
+    const placeholder = document.getElementById('upload-placeholder');
+
+    if(fileInput) fileInput.value = ""; // Reset file
+    if(imgPreview) {
+        imgPreview.src = "";
+        imgPreview.classList.add('hidden'); // Ẩn ảnh
+    }
+    if(placeholder) placeholder.classList.remove('hidden'); // Hiện lại chữ "Tải ảnh"
+    
+    document.getElementById('pass-desc-input').value = ''; 
     
     // Hiển thị Modal
     document.getElementById('pass-modal').classList.remove('hidden');
@@ -1050,40 +1366,60 @@ function closePassModal() {
     document.getElementById('pass-modal').classList.add('hidden');
 }
 
-// 3. Xử lý khi bấm nút "Đăng lên cộng đồng" trong Modal
+// 3. Xử lý Đăng bài (Có xử lý ảnh thật)
 function submitPassForm() {
-    const desc = document.getElementById('pass-desc-input').value || "Chủ cũ không để lại mô tả.";
+    const desc = document.getElementById('pass-desc-input').value;
     const condition = document.getElementById('pass-condition-input').value;
     const type = document.getElementById('pass-type-input').value;
     
+    if (!currentPassItemId) return;
+
     const itemIndex = myWardrobe.findIndex(i => i.id === currentPassItemId);
     if (itemIndex === -1) return;
-    
     const item = myWardrobe[itemIndex];
 
-    // Xóa khỏi tủ đồ
+    // Xử lý ảnh: Nếu có ảnh upload thì dùng, không thì dùng icon mặc định
+    const previewImgElement = document.getElementById('upload-preview');
+    let finalIcon = item.img; 
+
+    if (!previewImgElement.classList.contains('hidden') && previewImgElement.src) {
+        // Tạo thẻ img để hiển thị ảnh thật
+        finalIcon = `<img src="${previewImgElement.src}" class="w-full h-full object-cover rounded-xl">`;
+    }
+
+    // Cắt khỏi tủ đồ
     myWardrobe.splice(itemIndex, 1);
-    renderWardrobe();
+    renderWardrobe(); 
 
     // Thêm vào chợ
     const newItem = {
         id: Date.now(),
         name: item.name,
-        user: "Bạn (Me)", // Đánh dấu là đồ của mình
+        user: "Bạn (Me)",
         condition: condition,
-        icon: item.img,
+        icon: finalIcon, 
         type: type === 'GreenPoints' ? 'Đổi điểm' : (type === 'Swap' ? 'Trao đổi' : 'Tặng'),
-        desc: desc,
-        comments: [] // Khởi tạo mảng comment rỗng
+        desc: desc || "Món này mình ít dùng, pass lại cho bạn nào cần.",
+        comments: []
     };
 
     swapItems.unshift(newItem);
     
+    // Hoàn tất
     closePassModal();
-    alert("✅ Đăng bài thành công! +15 GreenPoints");
-    switchHubTab('market'); // Chuyển sang tab chợ để xem
+    switchHubTab('market'); 
+    
+    // Cộng điểm & Thông báo
+    currentUser.points += 15; 
+    updateAllPointDisplays();
+    
+    // Kiểm tra hàm showToast có tồn tại không để tránh lỗi
+    if(typeof showToast === "function") {
+        showToast("✅ Đã đăng pass thành công! (+15 GP)");
+    } else {
+        showToast("Đăng bài không thành công! (+15 GP)");
+    }
 }
-
     // Render Chợ với tính năng Comment & Xóa bài
 function renderEnhancedSwap() {
     const container = document.getElementById('swap-list-enhanced');
@@ -1152,7 +1488,7 @@ function deletePost(id) {
     if(confirm("Xác nhận món này đã được Pass xong? Bài đăng sẽ bị xóa.")) {
         swapItems = swapItems.filter(i => i.id !== id);
         renderEnhancedSwap();
-        alert("Đã cập nhật trạng thái thành công!");
+        showToast("Đã cập nhật trạng thái thành công!");
     }
 }
 
@@ -1240,12 +1576,29 @@ function filterSavedItems(type) {
         }
     }
 }       
+function updateQty(id, change) {
+    const item = cart.find(i => i.id === id);
+    if (item) {
+        item.qty += change;
+        if (item.qty <= 0) {
+            // Nếu giảm về 0 thì hỏi xóa
+            if(confirm("Xóa sản phẩm này khỏi giỏ?")) {
+                cart = cart.filter(i => i.id !== id);
+            } else {
+                item.qty = 1; // Hủy xóa thì trả về 1
+            }
+        }
+        updateBadge();
+        renderCheckoutPage();
+    }
+}
+
     // --- INIT ---
     renderProducts(); 
     renderSwap(); 
     updateBadge(); 
     setCategory('all');
-    renderWardrobe(); 
+    renderWardrobe();
     </script>
 </body>
 </html>
